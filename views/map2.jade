@@ -1,0 +1,11 @@
+extends layout
+block content
+    form(action='/filter')
+        select(name='name')
+            option(disabled='', selected='', value='') Select One...
+            option(value='CONSTRUCTION') Under Construction
+            option(value='BP FILED') BP Filed
+            option(value='--') Bad Option
+        input(type='submit', value='Submit')
+    #map
+    script(src="/views/example.js")
