@@ -34,7 +34,6 @@ router.get('/map', function(req, res) {
 });
 
 /* GET the filtered page */
-
 router.get('/filter*', function (req, res) {
     var name = req.query.name;
     if (name.indexOf("--") > -1 || name.indexOf("'") > -1 || name.indexOf(";") > -1 || name.indexOf("/*") > -1 || name.indexOf("xp_") > -1){
