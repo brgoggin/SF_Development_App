@@ -7,6 +7,9 @@ block content
             option(value='BP FILED') BP Filed
             option(value='--') Bad Option
         input(type='submit', value='Submit')
+    form(action='/csv_export')
+        input(type='submit', value='Export Selection to CSV')
+        
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
