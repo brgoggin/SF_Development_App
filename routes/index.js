@@ -64,10 +64,11 @@ router.get('/filter*', function (req, res) {
     
 });
 
-/* GET home page. */
+
 router.get('/csv_export', function(req, res, next) {
+    
     var data = null;
-    var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg WHERE lg.beststat = 'CONSTRUCTION') As f) As fc";
+    var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg) As f) As fc";
     var client = new pg.Client(conString);
     client.connect();
     var query = client.query(filter_query);
@@ -78,6 +79,7 @@ router.get('/csv_export', function(req, res, next) {
         data = result.rows[0].row_to_json
         //res.send(data.features[0].properties.f1);
         //res.send(JSON.stringify(data));
+        
         var myArray=[];
 
         for (i = 0; i < data.features.length; i++) {
@@ -94,6 +96,28 @@ router.get('/csv_export', function(req, res, next) {
 
 });
 
+// POST request
+router.post('/csv_export', function(req, res, next) {
+    //res.send(req.body.ID);
+    //var input = req.body.features[0].properties.f1
+    //res.send(req.body.ID);
+
+    var data = JSON.parse(req.body.ID);
+    
+    var myArray=[];
+
+    for (i = 0; i < data.features.length; i++) {
+        var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f3};
+        myArray.push(myObject);
+    }
+    res.send(myArray[0].nameaddr);
+    /*
+    var fields = ['nameaddr', 'net_units', 'beststat'];
+    var csv = json2csv({data: myArray, fields: fields});
+    res.setHeader('Content-disposition', 'attachment; filename=data.csv');
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csv);*/
+});
 
 
 module.exports = router;
