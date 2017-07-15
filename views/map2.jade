@@ -8,10 +8,10 @@ block content
             option(value='BP REINSTATED') BP Reinstated
             option(value='--') Bad Option
         input(type='submit', value='Submit', name='on_map')
+        input(type='button', value='Export to CSV')
     form(action='/csv_export')
-        input(type='hidden', name='lastname' value=name id = 'test_input')
-        input(type='submit', value='Export Selection to CSV', name='on_map')
-    button Export CSV Data 
+        input(type='submit', value='Export Selection to CSV')
+    button Export CSV Data
         
     #map
     script.
@@ -19,10 +19,8 @@ block content
         var status = document.getElementById('user_input').name;
         $("button").click(function(){
             //$.ajax({type: 'GET', url: '/csv_export', data: {ID: 'hello baby'}});
-            //$.post("/csv_export", {ID: JSON.stringify(myData)}, function(response) { console.log(response);});
-            //$.get("/csv_export", {query_var: query_str}, function(response, status) {console.log(response); console.log(status);});
-            $.get("/csv_export", {query_var: query_str});
-            
+            $.post("/csv_export", {ID: JSON.stringify(myData)});
+            //alert('hello');
             });
     
     script(src="/javascripts/example.js")

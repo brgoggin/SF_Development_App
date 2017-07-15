@@ -21,6 +21,7 @@ var data = null;
 
 /* GET the map page */
 router.get('/map', function(req, res) {
+    
     var client = new pg.Client(conString); // Setup our Postgres Client
     client.connect(); // connect to the client
     var query = client.query(dev_query); // Run our Query
@@ -32,13 +33,17 @@ router.get('/map', function(req, res) {
         data = result.rows[0].row_to_json // Save the JSON as variable data
         res.render('map', {
             title: "Express API", // Give a title to our page
-            jsonData: data // Pass data to the View
+            jsonData: data, // Pass data to the View
+            name: dev_query
         });
     });
 });
 
 /* GET the filtered page */
 router.get('/filter*', function (req, res) {
+    //var namevar = req.query.on_map;
+    //res.send(namevar);
+    
     var name = req.query.name;
     if (name.indexOf("--") > -1 || name.indexOf("'") > -1 || name.indexOf(";") > -1 || name.indexOf("/*") > -1 || name.indexOf("xp_") > -1){
         console.log("Bad request detected");
@@ -57,7 +62,8 @@ router.get('/filter*', function (req, res) {
             data = result.rows[0].row_to_json
             res.render('map', {
                 title: "Express API",
-                jsonData: data
+                jsonData: data,
+                name: filter_query
             });
         });
     };
@@ -66,9 +72,13 @@ router.get('/filter*', function (req, res) {
 
 
 router.get('/csv_export', function(req, res, next) {
+    var filter_query = req.query.lastname;
+    //var filter_query = req.query.query_var;
+    //res.send(req.query.name);
+    //res.send(filter_query)
     
     var data = null;
-    var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg) As f) As fc";
+    //var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg) As f) As fc";
     var client = new pg.Client(conString);
     client.connect();
     var query = client.query(filter_query);
@@ -96,12 +106,8 @@ router.get('/csv_export', function(req, res, next) {
 
 });
 
-// POST request
 router.post('/csv_export', function(req, res, next) {
-    //res.send(req.body.ID);
-    //var input = req.body.features[0].properties.f1
-    //res.send(req.body.ID);
-
+    
     var data = JSON.parse(req.body.ID);
     
     var myArray=[];
@@ -110,14 +116,16 @@ router.post('/csv_export', function(req, res, next) {
         var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f3};
         myArray.push(myObject);
     }
-    res.send(myArray[0].nameaddr);
-    /*
+    //res.send(myArray[0].nameaddr);
+    
     var fields = ['nameaddr', 'net_units', 'beststat'];
     var csv = json2csv({data: myArray, fields: fields});
     res.setHeader('Content-disposition', 'attachment; filename=data.csv');
     res.set('Content-Type', 'text/csv');
-    res.status(200).send(csv);*/
+    res.status(200).send(csv);
+
 });
+
 
 
 module.exports = router;
