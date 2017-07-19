@@ -11,18 +11,11 @@ block content
     form(action='/csv_export')
         input(type='hidden', name='lastname' value=name id = 'test_input')
         input(type='submit', value='Export Selection to CSV', name='on_map')
-    button Export CSV Data 
+    button(id='pdf_download') Download PDF Report
         
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
         var status = document.getElementById('user_input').name;
-        $("button").click(function(){
-            //$.ajax({type: 'GET', url: '/csv_export', data: {ID: 'hello baby'}});
-            //$.post("/csv_export", {ID: JSON.stringify(myData)}, function(response) { console.log(response);});
-            //$.get("/csv_export", {query_var: query_str}, function(response, status) {console.log(response); console.log(status);});
-            $.get("/csv_export", {query_var: query_str});
-            
-            });
     
     script(src="/javascripts/example.js")

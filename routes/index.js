@@ -73,12 +73,8 @@ router.get('/filter*', function (req, res) {
 
 router.get('/csv_export', function(req, res, next) {
     var filter_query = req.query.lastname;
-    //var filter_query = req.query.query_var;
-    //res.send(req.query.name);
-    //res.send(filter_query)
     
     var data = null;
-    //var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg) As f) As fc";
     var client = new pg.Client(conString);
     client.connect();
     var query = client.query(filter_query);
