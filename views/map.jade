@@ -6,7 +6,9 @@ block content
             option(value='CONSTRUCTION') Under Construction
             option(value='BP FILED') BP Filed
             option(value='BP REINSTATED') BP Reinstated
-            option(value='--') Bad Option
+            option(value='BP ISSUED') BP Issued
+            option(value='PL APPROVED') PL Approved
+            option(value='PL FILED') PL Filed
         input(type='submit', value='Submit', name='on_map')
     form(action='/csv_export')
         input(type='hidden', name='lastname' value=name id = 'test_input')
@@ -16,6 +18,5 @@ block content
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
-        var status = document.getElementById('user_input').name;
     
     script(src="/javascripts/example.js")

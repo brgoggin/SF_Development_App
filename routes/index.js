@@ -13,8 +13,10 @@ var host = "localhost"
 var database = "briangoggin" // database name
 var conString = "postgres://"+username+":"+password+"@"+host+"/"+database; // Your Database Connection
 
+var variables = "nameaddr, net_units, net_aff_units, net_ret, net_mips, net_cie, net_pdr, net_med, net_visit, beststat"
+
 // Set up your database query to display GeoJSON
-var dev_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg) As f) As fc";
+var dev_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((" + variables + ")) As properties FROM dev_pipeline As lg) As f) As fc";
 
 //initialize data here so that we make it global in scope for this file
 var data = null;
@@ -41,8 +43,6 @@ router.get('/map', function(req, res) {
 
 /* GET the filtered page */
 router.get('/filter*', function (req, res) {
-    //var namevar = req.query.on_map;
-    //res.send(namevar);
     
     var name = req.query.name;
     if (name.indexOf("--") > -1 || name.indexOf("'") > -1 || name.indexOf(";") > -1 || name.indexOf("/*") > -1 || name.indexOf("xp_") > -1){
@@ -51,7 +51,7 @@ router.get('/filter*', function (req, res) {
         return;
     } else {
         console.log("Request passed")
-        var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((nameaddr, net_units, beststat)) As properties FROM dev_pipeline As lg WHERE lg.beststat = \'" + name + "\') As f) As fc";
+        var filter_query = "SELECT row_to_json(fc) FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.geom)::json As geometry, row_to_json((" + variables + ")) As properties FROM dev_pipeline As lg WHERE lg.beststat = \'" + name + "\') As f) As fc";
         var client = new pg.Client(conString);
         client.connect();
         var query = client.query(filter_query);
