@@ -44,27 +44,6 @@ document.getElementById('pdf_download').addEventListener('click', function() {
 });
 
 
-var test_input = myData.features[0].properties.f1;
-var test_input2 = myData.features[0].properties.f2;
-var test_input3 = myData.features[0].properties.f3;
-var test_input4 = myData.features[0].properties.f4;
-var test_input5 = myData.features[0].properties.f5;
-var test_input6 = myData.features[0].properties.f6;
-var test_input7 = myData.features[0].properties.f7;
-var test_input8 = myData.features[0].properties.f8;
-var test_input9 = myData.features[0].properties.f9;
-    
-/*
-var projects = myData.features;
-var proj_list = [];
-for (i = 0; i < projects.length; i++) {
-    var props = projects[i].properties;
-    var obj = {"address": props.f1, "net_units": props.f2, "net_aff_units": props.f3, "net_ret": props.f4,
-    "net_mips": props.f5, "net_cie": props.f6, "net_pdr": props.f7, "net_med": props.f8, "net_visit": props.f9};
-    proj_list.push(obj);
-}*/
-    
-
 function downloadMap(err, canvas) {
     var imgData = canvas.toDataURL();
     var dimensions = map.getSize();
@@ -79,39 +58,86 @@ function downloadMap(err, canvas) {
 	{title: "Affordable", dataKey: "net_aff_units"},
     {title: "Retail", dataKey: "net_ret"},
     {title: "MIPS", dataKey: "net_mips"},
-    {title: "CIE", dataKay: "net_cie"},
+    {title: "CIENET", dataKay: "net_cie"},
     {title: "PDR", dataKey: "net_pdr"},
     {title: "MED", dataKey: "net_med"},
     {title: "VISIT", dataKey: "net_visit"}];
-    /*
-	var rows = [
-	{"address": test_input, "net_units": test_input2, "net_aff_units": test_input3, "net_ret": test_input4, "net_mips": test_input5, "net_cie": test_input6,
-    "net_pdr": test_input7, "net_med": test_input8, "net_visit": test_input9},
-    {"address": test_input, "net_units": test_input2, "net_aff_units": test_input3, "net_ret": test_input4, "net_mips": test_input5, "net_cie": test_input6,
-        "net_pdr": test_input7, "net_med": test_input8, "net_visit": test_input9}];*/
 
     var rows = [];
     
-    //Add construction projects to the list
-    var cons_rows = [];
-    var column1 = {"address": "Under Construction", "net_units": 0, "net_aff_units": 0, "net_ret": 0,
-    "net_mips": 0, "net_cie": 0, "net_pdr": 0, "net_med": 0, "net_visit": 0};
-    cons_rows.push(column1);
-    for (i = 0; i < 8; i++) {
-        var props = myData.features[i].properties;
-        var obj = {"address": props.f1.toLocaleString(), "net_units": props.f2.toLocaleString(), "net_aff_units": props.f3.toLocaleString(), "net_ret": props.f4.toLocaleString(),
-        "net_mips": props.f5.toLocaleString(), "net_cie": props.f6.toLocaleString(), "net_pdr": props.f7.toLocaleString(), "net_med": props.f8.toLocaleString(), "net_visit": props.f9.toLocaleString()};
-        cons_rows.push(obj);
+    //Define sum functions for sum rows in table
+    function getUnitSum(total, num) {
+        var number = parseInt(num.net_units.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getUnitAffSum(total, num) {
+        var number = parseInt(num.net_aff_units.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getRetSum(total, num) {
+        var number = parseInt(num.net_ret.replace(',', ''));
+        var result = parseInt(total) + number
+        return result;
+    }
+    function getMipsSum(total, num) {
+        var number = parseInt(num.net_mips.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getCieSum(total, num) {
+        var number = parseInt(num.net_cie.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getPDRSum(total, num) {
+        var number = parseInt(num.net_pdr.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getMedSum(total, num) {
+        var number = parseInt(num.net_med.replace(',', ''));
+        return parseInt(total) + number;
+    }
+    function getVisitSum(total, num) {
+        var number = parseInt(num.net_visit.replace(',', ''));
+        return parseInt(total) + number;
     }
     
+    //Add construction projects to the list
+    var cons_rows = [];
+
+    for (i = 0; i < 8; i++) {
+        var props = myData.features[i].properties;
+        if (props.f10 == 'CONSTRUCTION') {
+            var obj = {"address": props.f1.toLocaleString(), "net_units": props.f2.toLocaleString(), "net_aff_units": props.f3.toLocaleString(), "net_ret": props.f4.toLocaleString(),
+            "net_mips": props.f5.toLocaleString(), "net_cie": props.f6.toLocaleString(), "net_pdr": props.f7.toLocaleString(), "net_med": props.f8.toLocaleString(), "net_visit": props.f9.toLocaleString()};
+            cons_rows.push(obj);
+        }
+    }
+    //console.log(cons_rows[0]);
+    var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
+    
     //concatenate lists together into one master list
-    var rows = rows.concat(cons_rows);
+    var rows = rows.concat(cons_sum, cons_rows);
+    
+    console.log(rows[0].net_cie);
+    console.log(rows[1].net_cie);
+    console.log(rows[2].net_cie);
+    console.log(rows[3].net_cie);
+    console.log(rows[4].net_cie);
+    console.log(rows[5].net_cie);
+    console.log(rows[6].net_cie);
+    console.log(rows[7].net_cie);
+    console.log(rows[8].net_cie);
+    /*
+    for (i = 0; rows.length; i++) {
+        rows[i].net_cie="36";
+    }
+*/
+    //alert(rows[0].net_cie);
     
 	pdf.setFontSize(12);
 	pdf.autoTable(columns, rows, {
-	theme: 'striped',
+	theme: 'grid',
     drawCell: function(cell, data) {
-      var rows = data.table.rows;
       if (data.row.cells.address.raw === 'Under Construction') {
         pdf.setFillColor(102, 178, 255);
       }
