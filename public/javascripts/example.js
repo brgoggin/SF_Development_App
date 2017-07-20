@@ -47,22 +47,24 @@ document.getElementById('pdf_download').addEventListener('click', function() {
 function downloadMap(err, canvas) {
     var imgData = canvas.toDataURL();
     var dimensions = map.getSize();
-    //console.log(myData.features[250].properties);
     
     var pdf = new jsPDF('p', 'pt', 'letter');
     pdf.addImage(imgData, 'PNG', 10, 10, dimensions.x * 0.5, dimensions.y * 0.5);
-	
+    
+    //pdf.rect(130, 350, 60, 60); test rectangle
+
 	var columns = [
 	{title: "Address", dataKey: "address"},
 	{title: "Market Rate", dataKey: "net_units"}, 
 	{title: "Affordable", dataKey: "net_aff_units"},
     {title: "Retail", dataKey: "net_ret"},
     {title: "MIPS", dataKey: "net_mips"},
-    {title: "CIENET", dataKay: "net_cie"},
+    {title: "CIE", dataKey: "net_cie"},
     {title: "PDR", dataKey: "net_pdr"},
     {title: "MED", dataKey: "net_med"},
     {title: "VISIT", dataKey: "net_visit"}];
-
+    
+    
     var rows = [];
     
     //Define sum functions for sum rows in table
@@ -103,7 +105,7 @@ function downloadMap(err, canvas) {
     //Add construction projects to the list
     var cons_rows = [];
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 30; i++) {
         var props = myData.features[i].properties;
         if (props.f10 == 'CONSTRUCTION') {
             var obj = {"address": props.f1.toLocaleString(), "net_units": props.f2.toLocaleString(), "net_aff_units": props.f3.toLocaleString(), "net_ret": props.f4.toLocaleString(),
@@ -111,41 +113,46 @@ function downloadMap(err, canvas) {
             cons_rows.push(obj);
         }
     }
-    //console.log(cons_rows[0]);
     var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
+    "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
+    
+    //Add BP Approved projects to the list
+    var BP_rows = [];
+
+    for (i = 0; i < 30; i++) {
+        var props = myData.features[i].properties;
+        if (props.f10 == 'BP ISSUED') {
+            var obj = {"address": props.f1.toLocaleString(), "net_units": props.f2.toLocaleString(), "net_aff_units": props.f3.toLocaleString(), "net_ret": props.f4.toLocaleString(),
+            "net_mips": props.f5.toLocaleString(), "net_cie": props.f6.toLocaleString(), "net_pdr": props.f7.toLocaleString(), "net_med": props.f8.toLocaleString(), "net_visit": props.f9.toLocaleString()};
+            BP_rows.push(obj);
+        }
+    }
+    var BP_sum = {"address": "Building Approved", "net_units": BP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BP_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": BP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BP_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": BP_rows.reduce(getVisitSum, 0).toLocaleString()};
     
     //concatenate lists together into one master list
-    var rows = rows.concat(cons_sum, cons_rows);
-    
-    console.log(rows[0].net_cie);
-    console.log(rows[1].net_cie);
-    console.log(rows[2].net_cie);
-    console.log(rows[3].net_cie);
-    console.log(rows[4].net_cie);
-    console.log(rows[5].net_cie);
-    console.log(rows[6].net_cie);
-    console.log(rows[7].net_cie);
-    console.log(rows[8].net_cie);
-    /*
-    for (i = 0; rows.length; i++) {
-        rows[i].net_cie="36";
-    }
-*/
-    //alert(rows[0].net_cie);
+    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows);
     
 	pdf.setFontSize(12);
+
 	pdf.autoTable(columns, rows, {
-	theme: 'grid',
+	theme: 'striped',
     drawCell: function(cell, data) {
-      if (data.row.cells.address.raw === 'Under Construction') {
+      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved') {
         pdf.setFillColor(102, 178, 255);
       }
     },
-	margin: {top: 380},
-	addPageContent: function(data) {
-	pdf.text("Development Projects", 80, 370);
-	}
+    drawRow: function (row, data) {
+        //pdf.rect(data.settings.margin.left, row.y, data.table.width, 20, 'S');
+        pdf.rect(130, data.table.height, 60, 60);
+    },
+    startY: 380,
+    showHeader: 'firstPage',
+    styles: {overflow: 'linebreak', tableWidth: 'auto', },
+    margin: 20,
+    columnStyles: {address: {columnWidth: 100}}, 
 	});
 
     pdf.save("download.pdf");
