@@ -89,7 +89,7 @@ router.get('/csv_export', function(req, res, next) {
         var myArray=[];
 
         for (i = 0; i < data.features.length; i++) {
-            var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f3};
+            var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f10};
             myArray.push(myObject);
         }
         //res.send(myArray[0].nameaddr);
@@ -109,7 +109,7 @@ router.post('/csv_export', function(req, res, next) {
     var myArray=[];
 
     for (i = 0; i < data.features.length; i++) {
-        var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f3};
+        var myObject = {'nameaddr': data.features[i].properties.f1, 'net_units': data.features[i].properties.f2, 'beststat': data.features[i].properties.f10};
         myArray.push(myObject);
     }
     //res.send(myArray[0].nameaddr);
