@@ -2,14 +2,18 @@ extends layout
 block content
     form(action='/filter', id='user_input')
         select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
-            option(disabled='', value='') Select One...
-            option(value='All') Select One...
+            option(value='All') All
             option(value='CONSTRUCTION') Under Construction
             option(value='BP FILED') BP Filed
             option(value='BP REINSTATED') BP Reinstated
             option(value='BP ISSUED') BP Issued
             option(value='PL APPROVED') PL Approved
             option(value='PL FILED') PL Filed
+        select(name='place', select class="selectpicker", data-live-search="true", id = "placeSelect")
+            optgroup(label='Neighborhoods', title='neighborhoods_41')
+                option(value = '{"placename": "All", "type": "neighborhoods_41"}') All
+                option(value = '{"placename": "Bayview Hunters Point", "type": "neighborhoods_41"}') Bayview Hunters Point
+                option(value = '{"placename": "Bernal Heights", "type": "neighborhoods_41"}') Bernal Heights
         label(for ='lower_bound') Net Units: From
         input(type='text', value = lower_bound, name='lower_bound', id='lower_bound')
         label(for ='upper_bound') to
@@ -23,15 +27,32 @@ block content
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
+        
+        /*Fix project status after clicking on button*/
         var proj_status = '#{status_select}';
         var status_option=document.getElementById("statusSelect");
-        var opt_select = 3;
+        var opt_select = null;
         for (i = 0; i < status_option.options.length; i++) {
             var option = status_option.options[i];
             if (option.value == proj_status) {
                 opt_select = i;
             }
         }
-        
         status_option.options[opt_select].selected = true;
+        
+        /*Fix place status after clicking on button*/
+        var place_status = '#{place_select}';
+        console.log(place_status);
+        var place_option=document.getElementById("placeSelect");
+        var optp_select = null;
+        for (i = 0; i < place_option.options.length; i++) {
+            var option = place_option.options[i];
+            var value = JSON.parse(option.value).placename;
+            if (value == place_status) {
+                optp_select = i;
+            }
+        }
+        place_option.options[optp_select].selected = true;
+        
+        
     script(src="/javascripts/example.js")

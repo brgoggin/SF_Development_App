@@ -56,19 +56,47 @@ router.get('/filter*', function (req, res) {
     if (proj_status == 'All') {
         var statusvar = "";
     } else {
-        var statusvar = " WHERE status = '" + proj_status + "'";
+        var statusvar = " AND status = '" + proj_status + "'";
     }
-    var query = "SELECT * FROM current_data" + statusvar + unit_query;
+    
+    //Get place filter
+    var place_response = req.query.place;
+    var place = JSON.parse(place_response).placename;
+    var type = JSON.parse(place_response).type;
+    
+    //Get correct variable name
+    if (type=='neighborhoods_41') {
+        var var_name = 'nhood';
+    }
+    else if (type == 'pdas') {
+        var var_name = 'name';
+    }
+    else if (type == 'area_plans') {
+        var var_name = 'planarea';
+    }
+    else if (type == 'supervisor_districts') {
+        var var_name = 'supdist';
+    }
 
+    if (place == 'All') {
+        var placevar = "(SELECT * FROM table_41_neighborhoods)";
+    } else {
+        var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
+    }
+    
+    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query  + statusvar;
+    //res.send(combined_query);
+    
     var sql = new CartoDB.SQL({user:'bgoggin'})
-    sql.execute(query, {format: 'geojson'}).done(function(data) {
+    sql.execute(combined_query, {format: 'geojson'}).done(function(data) {
       var carto_response = JSON.parse(data);
       res.render('map', {
           jsonData: carto_response,
-          sent_string: query,
+          sent_string: combined_query,
           lower_bound: lower_bound,
           upper_bound: upper_bound,
-          status_select: proj_status
+          status_select: proj_status,
+          place_select: place
       });
     });
     
