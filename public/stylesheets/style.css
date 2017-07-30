@@ -12,3 +12,7 @@ a {
 	height: 600px;
 }
 
+form label {
+    font-weight: normal;
+}
+

@@ -37,7 +37,6 @@ function pointToLayer(feature, latlng) {
 }
 
 
-
 //Add code to download PDF Report
 document.getElementById('pdf_download').addEventListener('click', function() {
     leafletImage(map, downloadMap);

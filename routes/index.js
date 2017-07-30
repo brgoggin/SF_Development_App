@@ -23,11 +23,15 @@ var data = null;
 router.get('/map', function(req, res) {
     var sql = new CartoDB.SQL({user:'bgoggin'})
     var query = "SELECT * FROM current_data";
+    var status_select = "All";
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var carto_response = JSON.parse(data);
       res.render('map', {
           jsonData: carto_response,
-          sent_string: query
+          sent_string: query,
+          lower_bound: '',
+          upper_bound: '',
+          status_select: status_select
       }); 
     });
     
@@ -36,20 +40,35 @@ router.get('/map', function(req, res) {
 // GET the filtered page—commented out for now because I am using Carto API
 
 router.get('/filter*', function (req, res) {
+    var lower_bound = req.query.lower_bound;
+    var upper_bound = req.query.upper_bound;
+    if (lower_bound != '' && upper_bound != '') {
+        var unit_query = "AND net_units BETWEEN " + lower_bound.toString() + " AND " + upper_bound.toString();
+    } else if (lower_bound == '' && upper_bound !='') {
+        var unit_query = "AND net_units <= " + upper_bound.toString();
+    } else if (lower_bound != '' && upper_bound =='') {
+        var unit_query = "AND net_units >= " + lower_bound.toString();
+    } else {
+        var unit_query = "";
+    }
+    
     var proj_status = req.query.name;
     if (proj_status == 'All') {
         var statusvar = "";
     } else {
         var statusvar = " WHERE status = '" + proj_status + "'";
     }
-    var query = "SELECT * FROM current_data" + statusvar;
+    var query = "SELECT * FROM current_data" + statusvar + unit_query;
 
     var sql = new CartoDB.SQL({user:'bgoggin'})
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var carto_response = JSON.parse(data);
       res.render('map', {
           jsonData: carto_response,
-          sent_string: query
+          sent_string: query,
+          lower_bound: lower_bound,
+          upper_bound: upper_bound,
+          status_select: proj_status
       });
     });
     

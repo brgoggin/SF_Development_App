@@ -1,18 +1,19 @@
 extends layout
 block content
     form(action='/filter', id='user_input')
-        Hello
         select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
-            option(disabled='', selected='', value='') Select One...
+            option(disabled='', value='') Select One...
+            option(value='All') Select One...
             option(value='CONSTRUCTION') Under Construction
             option(value='BP FILED') BP Filed
             option(value='BP REINSTATED') BP Reinstated
             option(value='BP ISSUED') BP Issued
             option(value='PL APPROVED') PL Approved
             option(value='PL FILED') PL Filed
-        input(type='text', value = '', name='lower_bound')
-        to
-        input(type='text', value='', name='upper_bound')
+        label(for ='lower_bound') Net Units: From
+        input(type='text', value = lower_bound, name='lower_bound', id='lower_bound')
+        label(for ='upper_bound') to
+        input(type='text', value=upper_bound, name='upper_bound', id='upper_bound')
         input(type='submit', value='Submit', name='on_map')
     form(action='/csv_export')
         input(type='hidden', name='lastname', value=sent_string, id = 'test_input')
@@ -22,5 +23,15 @@ block content
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
-    
+        var proj_status = '#{status_select}';
+        var status_option=document.getElementById("statusSelect");
+        var opt_select = 3;
+        for (i = 0; i < status_option.options.length; i++) {
+            var option = status_option.options[i];
+            if (option.value == proj_status) {
+                opt_select = i;
+            }
+        }
+        
+        status_option.options[opt_select].selected = true;
     script(src="/javascripts/example.js")
