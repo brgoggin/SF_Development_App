@@ -1,7 +1,8 @@
 extends layout
 block content
     form(action='/filter', id='user_input')
-        select(name='name')
+        Hello
+        select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
             option(disabled='', selected='', value='') Select One...
             option(value='CONSTRUCTION') Under Construction
             option(value='BP FILED') BP Filed
@@ -9,9 +10,12 @@ block content
             option(value='BP ISSUED') BP Issued
             option(value='PL APPROVED') PL Approved
             option(value='PL FILED') PL Filed
+        input(type='text', value = '', name='lower_bound')
+        to
+        input(type='text', value='', name='upper_bound')
         input(type='submit', value='Submit', name='on_map')
     form(action='/csv_export')
-        input(type='hidden', name='lastname', value=name, id = 'test_input')
+        input(type='hidden', name='lastname', value=sent_string, id = 'test_input')
         input(type='submit', value='Export Selection to CSV', name='on_map')
     button(id='pdf_download') Download PDF Report
         
