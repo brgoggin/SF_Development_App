@@ -26,9 +26,11 @@ router.get('/map', function(req, res) {
     var status_select = "All"; //start with all to start
     var place = "All"; //start with all to start
     sql.execute(query, {format: 'geojson'}).done(function(data) {
+      var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
       var carto_response = JSON.parse(data);
       res.render('map', {
           jsonData: carto_response,
+          layerData: layer_response,
           sent_string: query,
           lower_bound: '',
           upper_bound: '',
@@ -88,18 +90,43 @@ router.get('/filter*', function (req, res) {
     
     var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query  + statusvar;
     
+    var sql_layer = new CartoDB.SQL({user:'bgoggin'});
+    var layer_response = 'hello2'; //initialize layer_response outside of the function below
     var sql = new CartoDB.SQL({user:'bgoggin'})
-    sql.execute(combined_query, {format: 'geojson'}).done(function(data) {
-      var carto_response = JSON.parse(data);
-      res.render('map', {
-          jsonData: carto_response,
-          sent_string: combined_query,
-          lower_bound: lower_bound,
-          upper_bound: upper_bound,
-          status_select: proj_status,
-          place_select: place
-      });
-    });
+    
+    //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
+    if (place !='All') {
+        var layer_query = "SELECT the_geom FROM " + type + " WHERE " + var_name + " = '" + place + "'";
+        sql_layer.execute(layer_query, {format: 'geojson'}).done(function(data) {
+            layer_response = JSON.parse(data);
+            sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+              var carto_response = JSON.parse(data2);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: combined_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  status_select: proj_status,
+                  place_select: place
+              });
+            });
+        });
+    } else {
+        sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data2);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: combined_query,
+              lower_bound: lower_bound,
+              upper_bound: upper_bound,
+              status_select: proj_status,
+              place_select: place
+          });
+        });
+    }
     
 });
 

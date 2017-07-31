@@ -8,8 +8,13 @@ var basemapProperties = {minZoom: 2, maxZoom: 16, attribution: basemapAttributio
 L.tileLayer(basemapUrl, basemapProperties).addTo(map);
   
 
-// Add JSON to map
+// Add projects layer (i.e. dots) to map
 L.geoJson(myData, {pointToLayer: pointToLayer}).addTo(map);
+
+//Add polygon layer to map if user selects a specific neighborhood. If user did not select a place, string 'All' sent to client instead of a GeoJson
+if (layerData2 != 'All') {
+    L.geoJson(layerData2).addTo(map);
+} 
 
 //specify what the circle markers should look like
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
