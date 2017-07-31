@@ -23,7 +23,8 @@ var data = null;
 router.get('/map', function(req, res) {
     var sql = new CartoDB.SQL({user:'bgoggin'})
     var query = "SELECT * FROM current_data";
-    var status_select = "All";
+    var status_select = "All"; //start with all to start
+    var place = "All"; //start with all to start
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var carto_response = JSON.parse(data);
       res.render('map', {
@@ -31,7 +32,8 @@ router.get('/map', function(req, res) {
           sent_string: query,
           lower_bound: '',
           upper_bound: '',
-          status_select: status_select
+          status_select: status_select,
+          place_select: place
       }); 
     });
     
@@ -84,8 +86,7 @@ router.get('/filter*', function (req, res) {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
     
-    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query  + statusvar;
-    //res.send(combined_query);
+    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query  + statusvar;
     
     var sql = new CartoDB.SQL({user:'bgoggin'})
     sql.execute(combined_query, {format: 'geojson'}).done(function(data) {

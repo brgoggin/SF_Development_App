@@ -1,5 +1,6 @@
+
 // Create variable to hold map element, give initial settings to map
-var map = L.map('map',{ center: [37.763317, -122.443445], zoom: 12, renderer: L.canvas()});
+var map = L.map('map', { center: [37.763317, -122.443445], zoom: 12, renderer: L.canvas()});
 // Add Tile Layer
 var basemapUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 var basemapAttribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
@@ -45,12 +46,13 @@ document.getElementById('pdf_download').addEventListener('click', function() {
 
 function downloadMap(err, canvas) {
 
+    
     var imgData = canvas.toDataURL();
     var dimensions = map.getSize();
     
     var pdf = new jsPDF('p', 'pt', 'letter');
     pdf.addImage(imgData, 'PNG', 10, 10, dimensions.x * 0.5, dimensions.y * 0.5);
-
+    
 	var columns = [
 	{title: "Address", dataKey: "address"},
 	{title: "Market Rate", dataKey: "net_units"}, 
@@ -102,23 +104,28 @@ function downloadMap(err, canvas) {
     
     //Add construction projects to the list
     var cons_rows = [];
-
-    for (i = 0; i < 30; i++) {
+    var d = 390
+    console.log(d.toLocaleString());
+    //var obj = {"address": d.toLocaleString()};
+    
+    //Start Problem section
+    for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
         if (props.status == 'CONSTRUCTION') {
-            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
-            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),"net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
             cons_rows.push(obj);
         }
     }
+    
+    //end problem section
     var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
     "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
     
     //Add BP Approved projects to the list
     var BP_rows = [];
-
-    for (i = 0; i < 30; i++) {
+    
+    for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
         if (props.status == 'BP ISSUED') {
             var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
@@ -126,19 +133,36 @@ function downloadMap(err, canvas) {
             BP_rows.push(obj);
         }
     }
+    
     var BP_sum = {"address": "Building Approved", "net_units": BP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BP_rows.reduce(getRetSum, 0).toLocaleString(),
     "net_mips": BP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BP_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": BP_rows.reduce(getVisitSum, 0).toLocaleString()};
     
-    //concatenate lists together into one master list
-    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows);
+    //Add BP Reinstated projects to the list
+    var BR_rows = [];
     
-	pdf.setFontSize(12);
-
+    for (i = 0; i < myData.features.length; i++) {
+        var props = myData.features[i].properties;
+        if (props.status == 'BP Reinstated') {
+            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
+            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+            BR_rows.push(obj);
+        }
+    }
+    
+    var BR_sum = {"address": "Building Reinstated", "net_units": BR_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BR_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BR_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": BR_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BR_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BR_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BR_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": BR_rows.reduce(getVisitSum, 0).toLocaleString()};
+    
+    //concatenate lists together into one master list
+    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, BR_sum, BR_rows);
+    
+	//pdf.setFontSize(12);
+    
 	pdf.autoTable(columns, rows, {
 	theme: 'striped',
     drawCell: function(cell, data) {
-      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved') {
+      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Building Reinstated') {
         pdf.setFillColor(102, 178, 255);
       }
     },
