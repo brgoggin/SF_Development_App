@@ -34,16 +34,21 @@ router.get('/map', function(req, res) {
           sent_string: query,
           lower_bound: '',
           upper_bound: '',
+          afflower_bound: '',
+          affupper_bound: '',
+          sflower_bound: '',
+          sfupper_bound: '',
           status_select: status_select,
           place_select: place
       }); 
     });
-    
 });
 
 // GET the filtered page—commented out for now because I am using Carto API
 
 router.get('/filter*', function (req, res) {
+    
+    //Grab Net Units input
     var lower_bound = req.query.lower_bound;
     var upper_bound = req.query.upper_bound;
     if (lower_bound != '' && upper_bound != '') {
@@ -56,6 +61,33 @@ router.get('/filter*', function (req, res) {
         var unit_query = "";
     }
     
+    //Grab Net Affordable Units Input
+    var afflower_bound = req.query.afflower_bound;
+    var affupper_bound = req.query.affupper_bound;
+    if (afflower_bound != '' && affupper_bound != '') {
+        var affunit_query = "AND net_aff_units BETWEEN " + afflower_bound.toString() + " AND " + affupper_bound.toString();
+    } else if (afflower_bound == '' && affupper_bound !='') {
+        var affunit_query = "AND net_aff_units <= " + affupper_bound.toString();
+    } else if (afflower_bound != '' && affupper_bound =='') {
+        var affunit_query = "AND net_aff_units >= " + afflower_bound.toString();
+    } else {
+        var affunit_query = "";
+    }
+    
+    //Grab Net Square Footage Input
+    var sflower_bound = req.query.sflower_bound;
+    var sfupper_bound = req.query.sfupper_bound;
+    if (sflower_bound != '' && sfupper_bound != '') {
+        var sfquery = "AND net_gsf BETWEEN " + sflower_bound.toString() + " AND " + sfupper_bound.toString();
+    } else if (sflower_bound == '' && sfupper_bound !='') {
+        var sfquery = "AND net_gsf <= " + sfupper_bound.toString();
+    } else if (sflower_bound != '' && sfupper_bound =='') {
+        var sfquery = "AND net_gsf >= " + sflower_bound.toString();
+    } else {
+        var sfquery = "";
+    }
+    
+    //Grab Project Status Input
     var proj_status = req.query.name;
     if (proj_status == 'All') {
         var statusvar = "";
@@ -88,7 +120,7 @@ router.get('/filter*', function (req, res) {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
     
-    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query  + statusvar;
+    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
     
     var sql_layer = new CartoDB.SQL({user:'bgoggin'});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
@@ -107,6 +139,10 @@ router.get('/filter*', function (req, res) {
                   sent_string: combined_query,
                   lower_bound: lower_bound,
                   upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
                   status_select: proj_status,
                   place_select: place
               });
@@ -122,6 +158,10 @@ router.get('/filter*', function (req, res) {
               sent_string: combined_query,
               lower_bound: lower_bound,
               upper_bound: upper_bound,
+              afflower_bound: afflower_bound,
+              affupper_bound: affupper_bound,
+              sflower_bound: sflower_bound,
+              sfupper_bound: sfupper_bound,
               status_select: proj_status,
               place_select: place
           });

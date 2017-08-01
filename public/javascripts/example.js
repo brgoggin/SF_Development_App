@@ -51,12 +51,14 @@ document.getElementById('pdf_download').addEventListener('click', function() {
 
 function downloadMap(err, canvas) {
 
-    
     var imgData = canvas.toDataURL();
     var dimensions = map.getSize();
     
     var pdf = new jsPDF('p', 'pt', 'letter');
-    pdf.addImage(imgData, 'PNG', 10, 10, dimensions.x * 0.5, dimensions.y * 0.5);
+    pdf.text(20,10, 'All Proposed Developments:');
+    pdf.text(20,25, 'in Bayview Hunters Point');
+    var center = ((pdf.internal.pageSize.width) / 2) - (dimensions.x*(0.25)); //center map image on page
+    pdf.addImage(imgData, 'PNG', center, 40, dimensions.x * 0.5, dimensions.y * 0.5);
     
 	var columns = [
 	{title: "Address", dataKey: "address"},
@@ -109,11 +111,7 @@ function downloadMap(err, canvas) {
     
     //Add construction projects to the list
     var cons_rows = [];
-    var d = 390
-    console.log(d.toLocaleString());
-    //var obj = {"address": d.toLocaleString()};
     
-    //Start Problem section
     for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
         if (props.status == 'CONSTRUCTION') {
@@ -122,7 +120,6 @@ function downloadMap(err, canvas) {
         }
     }
     
-    //end problem section
     var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
     "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
