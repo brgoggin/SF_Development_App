@@ -54,7 +54,7 @@ block content
             input(type='submit', value='Update Map', name='on_map')
     
         form(action='/csv_export')
-            input(type='hidden', name='lastname', value=sent_string, id = 'test_input')
+            input(type='hidden', name='export_query', value=sent_string, id = 'test_input')
             input(type='submit', value='Export Selection to CSV', name='on_map')
         button(id='pdf_download') Download PDF Report
         

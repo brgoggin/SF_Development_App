@@ -111,7 +111,7 @@ router.get('/filter*', function (req, res) {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
     
-    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.entitled, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
+    var combined_query = "SELECT cd.address, cd.net_units, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
     
     var sql_layer = new CartoDB.SQL({user:'bgoggin'});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
@@ -209,7 +209,7 @@ router.get('/filter*', function (req, res) {
 
 
 router.get('/csv_export', function(req, res, next) {
-    var query = req.query.lastname;
+    var query = req.query.export_query;
     
     var sql = new CartoDB.SQL({user:'bgoggin'})
     
@@ -218,10 +218,10 @@ router.get('/csv_export', function(req, res, next) {
       var myArray=[];
 
       for (i = 0; i < carto.features.length; i++) {
-          var myObject = {'Address': carto.features[i].properties.address, 'Net Units': carto.features[i].properties.net_units, 'Status': carto.features[i].properties.proj_status};
+          var myObject = {'Address': carto.features[i].properties.address, 'Net Units': carto.features[i].properties.net_units, 'Net Affordable Units': carto.features[i].properties.net_aff_units, 'Status': carto.features[i].properties.proj_status};
           myArray.push(myObject);
       }
-      var fields = ['Address', 'Net Units', 'Status'];
+      var fields = ['Address', 'Net Units', 'Net Affordable Units', 'Status'];
       var csv = json2csv({data: myArray, fields: fields});
       res.setHeader('Content-disposition', 'attachment; filename=data.csv');
       res.set('Content-Type', 'text/csv');

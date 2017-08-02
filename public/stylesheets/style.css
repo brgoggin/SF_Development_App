@@ -29,3 +29,15 @@ form label {
     font-weight: normal;
 }
 
+.description {
+  display: none;
+  	color: #777;
+}
+
+#pano {
+    height: 50%;
+    color: #777;
+	width: 200px;
+	height: 200px;
+  }
+

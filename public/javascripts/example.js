@@ -8,13 +8,13 @@ var basemapProperties = {minZoom: 2, maxZoom: 16, attribution: basemapAttributio
 L.tileLayer(basemapUrl, basemapProperties).addTo(map);
   
 
-// Add projects layer (i.e. dots) to map
-L.geoJson(myData, {pointToLayer: pointToLayer}).addTo(map);
-
 //Add polygon layer to map if user selects a specific neighborhood. If user did not select a place, string 'All' sent to client instead of a GeoJson
 if (layerData2 != 'All') {
     L.geoJson(layerData2).addTo(map);
 }
+
+// Add projects layer (i.e. dots) to map
+L.geoJson(myData, {pointToLayer: pointToLayer, onEachFeature: onEachFeature}).addTo(map);
 
 if (lat != '' && lon != '') {
     var marker = L.marker([lat, lon]).addTo(map);
@@ -45,6 +45,50 @@ function pointToLayer(feature, latlng) {
         var markerStyle = {radius: null, fillOpacity: 0.7, color: '#666666', opacity: 1, weight: 1, fillColor: '#0E6698'};
         markerStyle.radius = getRadius();
         return L.circleMarker(latlng, markerStyle);
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+		click: clickFeature
+    });
+}
+
+//on click, pan/zoom to feature and show popup
+function clickFeature(e) {
+    var target = e.target;
+    var latlng = target._latlng;
+    var props = target.feature.properties;
+
+	var popupContent ='<span class="popup-label"><b>' + props.address + '</b></span>' +
+    '<br /><span class="popup-label">Net Units: ' + props.net_units + '</span>' +
+    '<br /><span class="popup-label">Net Affordable Units: ' + props.net_aff_units + '</span>' +
+    '<br /><span class="popup-label">Net Non-Res SqFt: ' + props.net_gsf.toLocaleString() + '</span>' +
+    '<br /><span class="popup-label">Status: ' + props.proj_status + '</span>' +
+    '<br /><span class="popup-label">Zoning: ' + props.zoning_sim + '</span>' +
+    '<div id = "pano" class = "pano"></div>' +
+    '<button>Show Description</button>' +
+    '<br /><span class="description">' + props.pln_desc + '</span>';
+	 
+    var popup = L.popup({closeOnClick: false}).setContent(popupContent).setLatLng(latlng);
+    target.bindPopup(popup).openPopup(); 
+	
+     //Google Panorama Element 
+     var panoelement = document.getElementsByClassName("pano");
+     var panorama = new google.maps.StreetViewPanorama(
+     	panoelement[panoelement.length - 1], {
+     		position: latlng,
+     		pov: {
+     			heading: 34,
+     			pitch: 10
+     		}, 
+     		addressControl: false
+     	});
+        
+		$("button").click(function(){
+			  $(".description").toggle();
+		 });
+	 //updates popup content so that toggling works when opening popup a second time in the same session. Don't understand why this fixes it, but it does. 
+	 target.updatePopup();
 }
 
 
