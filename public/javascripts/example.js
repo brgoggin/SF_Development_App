@@ -60,8 +60,8 @@ function downloadMap(err, canvas) {
     var dimensions = map.getSize();
     
     var pdf = new jsPDF('p', 'pt', 'letter');
-    pdf.text(20,10, 'All Proposed Developments:');
-    pdf.text(20,25, 'in Bayview Hunters Point');
+    //pdf.text(20,10, 'All Proposed Developments:');
+    //pdf.text(20,25, 'in Bayview Hunters Point');
     var center = ((pdf.internal.pageSize.width) / 2) - (dimensions.x*(0.25)); //center map image on page
     pdf.addImage(imgData, 'PNG', center, 40, dimensions.x * 0.5, dimensions.y * 0.5);
     
@@ -119,7 +119,7 @@ function downloadMap(err, canvas) {
     
     for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
-        if (props.status == 'CONSTRUCTION') {
+        if (props.proj_status == 'Under Construction') {
             var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),"net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
             cons_rows.push(obj);
         }
@@ -134,7 +134,7 @@ function downloadMap(err, canvas) {
     
     for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
-        if (props.status == 'BP ISSUED') {
+        if (props.proj_status == 'Building Permit Approved') {
             var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
             "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
             BP_rows.push(obj);
@@ -145,31 +145,45 @@ function downloadMap(err, canvas) {
     "net_mips": BP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BP_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": BP_rows.reduce(getVisitSum, 0).toLocaleString()};
     
-    //Add BP Reinstated projects to the list
-    var BR_rows = [];
+    //Add Planning Entitled Projects to the list
+    var PL_rows = [];
     
     for (i = 0; i < myData.features.length; i++) {
         var props = myData.features[i].properties;
-        if (props.status == 'BP Reinstated') {
+        if (props.proj_status == 'Planning Entitled') {
             var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
             "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
-            BR_rows.push(obj);
+            PL_rows.push(obj);
         }
     }
     
-    var BR_sum = {"address": "Building Reinstated", "net_units": BR_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BR_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BR_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": BR_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BR_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BR_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BR_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": BR_rows.reduce(getVisitSum, 0).toLocaleString()};
+    var PL_sum = {"address": "Planning Entitled", "net_units": PL_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PL_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PL_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": PL_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PL_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PL_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PL_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": PL_rows.reduce(getVisitSum, 0).toLocaleString()};
+    
+    //Add Planning Entitled Projects to the list
+    var PP_rows = [];
+    
+    for (i = 0; i < myData.features.length; i++) {
+        var props = myData.features[i].properties;
+        if (props.proj_status == 'Proposed') {
+            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
+            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+            PP_rows.push(obj);
+        }
+    }
+    
+    var PP_sum = {"address": "Proposed", "net_units": PP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PP_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": PP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PP_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": PP_rows.reduce(getVisitSum, 0).toLocaleString()};
     
     //concatenate lists together into one master list
-    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, BR_sum, BR_rows);
-    
-	//pdf.setFontSize(12);
+    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, PL_sum, PL_rows, PP_sum, PP_rows);
     
 	pdf.autoTable(columns, rows, {
 	theme: 'striped',
     drawCell: function(cell, data) {
-      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Building Reinstated') {
+      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Planning Entitled' || data.row.cells.address.raw === 'Proposed') {
         pdf.setFillColor(102, 178, 255);
       }
     },

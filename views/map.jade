@@ -11,12 +11,10 @@ block content
             label(for ='name') Project Status: 
             select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
                 option(value='All') All
-                option(value='CONSTRUCTION') Under Construction
-                option(value='BP FILED') BP Filed
-                option(value='BP REINSTATED') BP Reinstated
-                option(value='BP ISSUED') BP Issued
-                option(value='PL APPROVED') PL Approved
-                option(value='PL FILED') PL Filed
+                option(value='Under Construction') Under Construction
+                option(value='Building Permit Approved') Building Permit Approved
+                option(value='Planning Entitled') Planning Entitled
+                option(value='Proposed') Proposed
             br
             label(for ='lower_bound') Net Units: From
             input(type='text', value = lower_bound, name='lower_bound', id='lower_bound', style='width: 50px;')

@@ -9,11 +9,11 @@ var NodeGeocoder = require('node-geocoder');
 
 //initialize data here so that we make it global in scope for this file
 var data = null;
-
+var dataset = 'q12017';
 // GET the map page 
 router.get('/map', function(req, res) {
     var sql = new CartoDB.SQL({user:'bgoggin'})
-    var query = "SELECT * FROM current_data";
+    var query = "SELECT * FROM " + dataset;
     var status_select = "All"; //start with all to start
     var place = "All"; //start with all to start
     sql.execute(query, {format: 'geojson'}).done(function(data) {
@@ -83,7 +83,7 @@ router.get('/filter*', function (req, res) {
     if (proj_status == 'All') {
         var statusvar = "";
     } else {
-        var statusvar = " AND status = '" + proj_status + "'";
+        var statusvar = " AND proj_status = '" + proj_status + "'";
     }
     
     //Get place filter
@@ -111,7 +111,7 @@ router.get('/filter*', function (req, res) {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
     
-    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM current_data AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
+    var combined_query = "SELECT cd.address, cd.net_units, cd.status, cd.entitled, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
     
     var sql_layer = new CartoDB.SQL({user:'bgoggin'});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
@@ -152,12 +152,12 @@ router.get('/filter*', function (req, res) {
             });
         });
     } else if (place == 'All' && address !="" && distance != "")  {
-        var geocoder = NodeGeocoder({provider: 'google', apiKey: ''}); //using Google geocoder API for now.
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: ''}); //using Google geocoder API for now. 
         geocoder.geocode(address, function(err, res_geo) {
             var lat = JSON.stringify(res_geo[0].latitude);
             var lon = JSON.stringify(res_geo[0].longitude);
             var conversion_factor = "*1609.34"; //convert from miles to meters
-            var address_query = "SELECT * FROM current_data WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
+            var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
         
             address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
               var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
@@ -204,7 +204,7 @@ router.get('/filter*', function (req, res) {
           });
         });
     }
-    */
+    
 });
 
 
@@ -218,7 +218,7 @@ router.get('/csv_export', function(req, res, next) {
       var myArray=[];
 
       for (i = 0; i < carto.features.length; i++) {
-          var myObject = {'Address': carto.features[i].properties.address, 'Net Units': carto.features[i].properties.net_units, 'Status': carto.features[i].properties.status};
+          var myObject = {'Address': carto.features[i].properties.address, 'Net Units': carto.features[i].properties.net_units, 'Status': carto.features[i].properties.proj_status};
           myArray.push(myObject);
       }
       var fields = ['Address', 'Net Units', 'Status'];
