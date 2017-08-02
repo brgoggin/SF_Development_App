@@ -14,7 +14,12 @@ L.geoJson(myData, {pointToLayer: pointToLayer}).addTo(map);
 //Add polygon layer to map if user selects a specific neighborhood. If user did not select a place, string 'All' sent to client instead of a GeoJson
 if (layerData2 != 'All') {
     L.geoJson(layerData2).addTo(map);
-} 
+}
+
+if (lat != '' && lon != '') {
+    var marker = L.marker([lat, lon]).addTo(map);
+    map.setView([lat, lon], 15);
+}
 
 //specify what the circle markers should look like
 if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {

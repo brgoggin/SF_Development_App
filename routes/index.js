@@ -3,18 +3,9 @@ var router = express.Router(); // setup usage of the Express router engine
 var json2csv = require('json2csv');
 var jquery = require('jQuery');
 var CartoDB = require('cartodb');
+var NodeGeocoder = require('node-geocoder');
+//var apikey = require('./key/index'); attempting to load external file. Can't figure it out yet
 
-//I comment the below section out because I am opting to use Carto PostGIS for now instead.
-
-// PostgreSQL and PostGIS module and connection setup 
-var pg = require("pg"); // require Postgres module
-
-// Setup connection
-var username = "briangoggin" // sandbox username
-var password = "" // read only privileges on our table
-var host = "localhost"
-var database = "briangoggin" // database name
-var conString = "postgres://"+username+":"+password+"@"+host+"/"+database; // Your Database Connection
 
 //initialize data here so that we make it global in scope for this file
 var data = null;
@@ -47,7 +38,7 @@ router.get('/map', function(req, res) {
 // GET the filtered page—commented out for now because I am using Carto API
 
 router.get('/filter*', function (req, res) {
-    
+
     //Grab Net Units input
     var lower_bound = req.query.lower_bound;
     var upper_bound = req.query.upper_bound;
@@ -126,6 +117,14 @@ router.get('/filter*', function (req, res) {
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
     var sql = new CartoDB.SQL({user:'bgoggin'})
     
+    //Geocoder variables if User Selects Distance and Address. Address sql search in conditional clause below.
+    var address = req.query.address;
+    var distance = req.query.distance;
+    var lat = ''; //initialize lat and lon
+    var lon = '';
+    
+    var address_layer = new CartoDB.SQL({user:'bgoggin'});
+    
     //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
     if (place !='All') {
         var layer_query = "SELECT the_geom FROM " + type + " WHERE " + var_name + " = '" + place + "'";
@@ -144,7 +143,41 @@ router.get('/filter*', function (req, res) {
                   sflower_bound: sflower_bound,
                   sfupper_bound: sfupper_bound,
                   status_select: proj_status,
-                  place_select: place
+                  place_select: place, 
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
+              });
+            });
+        });
+    } else if (place == 'All' && address !="" && distance != "")  {
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: ''}); //using Google geocoder API for now.
+        geocoder.geocode(address, function(err, res_geo) {
+            var lat = JSON.stringify(res_geo[0].latitude);
+            var lon = JSON.stringify(res_geo[0].longitude);
+            var conversion_factor = "*1609.34"; //convert from miles to meters
+            var address_query = "SELECT * FROM current_data WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
+        
+            address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
+              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var carto_response = JSON.parse(data);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: address_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
+                  status_select: proj_status,
+                  place_select: place,
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
               });
             });
         });
@@ -163,11 +196,15 @@ router.get('/filter*', function (req, res) {
               sflower_bound: sflower_bound,
               sfupper_bound: sfupper_bound,
               status_select: proj_status,
-              place_select: place
+              place_select: place,
+              address: address, 
+              distance: distance,
+              lat: lat,
+              lon: lon
           });
         });
     }
-    
+    */
 });
 
 

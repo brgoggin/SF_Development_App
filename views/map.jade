@@ -33,7 +33,9 @@ block content
             label(for ='sfupper_bound') to
             input(type='text', value= sfupper_bound, name='sfupper_bound', id='sfupper_bound', style='width: 50px;')
             br
-            label(for ='place') Search by Place 
+            label(for ='place', style='font-weight:bold') Search by Area or Address:
+            br
+            label(for ='place') Area: 
             select(name='place', select class="selectpicker", data-live-search="true", id = "placeSelect")
                 option(value = '{"placename": "All", "type": "neighborhoods_41"}') All
                 optgroup(label='Neighborhoods', title='neighborhoods_41')
@@ -45,7 +47,13 @@ block content
                     option(value = '{"placename": "Financial District/South Beach", "type": "neighborhoods_41"}') Financial District/South Beach
                     option(value = '{"placename": "Glen Park", "type": "neighborhoods_41"}') Glen Park
             br
-            input(type='submit', value='Submit', name='on_map')
+            label(for ='address') Address:
+            input(type='text', value = address, name='address', id='address', style='width: 200px;')
+            br
+            label(for ='distance') Distance Around (In Miles):
+            input(type='text', value= distance, name='distance', id='distance', style='width: 50px;')
+            br
+            input(type='submit', value='Update Map', name='on_map')
     
         form(action='/csv_export')
             input(type='hidden', name='lastname', value=sent_string, id = 'test_input')
@@ -56,6 +64,8 @@ block content
     script.
         var myData = !{JSON.stringify(jsonData)};
         var layerData2 = !{JSON.stringify(layerData)};
+        var lat = '#{lat}';
+        var lon = '#{lon}';
         
         /*Fix project status after clicking on button*/
         var proj_status = '#{status_select}';
