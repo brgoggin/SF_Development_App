@@ -4,7 +4,7 @@ var json2csv = require('json2csv');
 var jquery = require('jQuery');
 var CartoDB = require('cartodb');
 var NodeGeocoder = require('node-geocoder');
-//var apikey = require('./key/index'); attempting to load external file. Can't figure it out yet
+var dummy = require('./key.json');
 
 
 //initialize data here so that we make it global in scope for this file
@@ -38,7 +38,9 @@ router.get('/map', function(req, res) {
 // GET the filtered page—commented out for now because I am using Carto API
 
 router.get('/filter*', function (req, res) {
-
+    //res.send(circle.area(4));
+    //res.send(dummy.apikey);
+    
     //Grab Net Units input
     var lower_bound = req.query.lower_bound;
     var upper_bound = req.query.upper_bound;
@@ -91,12 +93,6 @@ router.get('/filter*', function (req, res) {
     var place = JSON.parse(place_response).placename;
     var type = JSON.parse(place_response).type;
     place = place.replace(/&#39;/g, "'");
-    //res.send(place);
-    /*
-    if (place == "Fisherman''s Wharf") {
-        alert('yay');
-    }*/
-    //var place = "Fisherman''s Wharf";
     
     //Get correct variable name
     if (type=='neighborhoods_41') {
@@ -111,6 +107,9 @@ router.get('/filter*', function (req, res) {
     else if (type == 'supervisor_districts') {
         var var_name = 'supdist';
     }
+    else if (type == 'current_planning_quad') {
+        var var_name = 'quad';
+    }
 
     if (place == 'All') {
         var placevar = "(SELECT * FROM table_41_neighborhoods)";
@@ -119,7 +118,6 @@ router.get('/filter*', function (req, res) {
     }
     
     var combined_query = "SELECT cd.address, cd.net_units, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
-    //res.send(combined_query);
     
     var sql_layer = new CartoDB.SQL({user:'bgoggin'});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
@@ -159,7 +157,7 @@ router.get('/filter*', function (req, res) {
             });
         });
     } else if (place == 'All' && address !="" && distance != "")  {
-        var geocoder = NodeGeocoder({provider: 'google', apiKey: 'AIzaSyBxbip5iKGM4bPy1U6M6W6lxIGOannoPY4'}); //using Google geocoder API for now. 
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
         geocoder.geocode(address, function(err, res_geo) {
             var lat = JSON.stringify(res_geo[0].latitude);
             var lon = JSON.stringify(res_geo[0].longitude);
@@ -211,6 +209,7 @@ router.get('/filter*', function (req, res) {
           });
         });
     }
+    
     
 });
 

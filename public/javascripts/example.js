@@ -221,13 +221,21 @@ function downloadMap(err, canvas) {
     "net_mips": PP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PP_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": PP_rows.reduce(getVisitSum, 0).toLocaleString()};
     
+    //Create total sum row
+    var total_rows = [];
+    total_rows.push(cons_sum, BP_sum, PL_sum, PP_sum);
+    
+    var total = {"address": "Total", "net_units": total_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": total_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": total_rows.reduce(getRetSum, 0).toLocaleString(),
+    "net_mips": total_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": total_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": total_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": total_rows.reduce(getMedSum, 0).toLocaleString(), 
+    "net_visit": total_rows.reduce(getVisitSum, 0).toLocaleString()};
+    
     //concatenate lists together into one master list
-    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, PL_sum, PL_rows, PP_sum, PP_rows);
+    var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, PL_sum, PL_rows, PP_sum, PP_rows, total);
     
 	pdf.autoTable(columns, rows, {
 	theme: 'striped',
     drawCell: function(cell, data) {
-      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Planning Entitled' || data.row.cells.address.raw === 'Proposed') {
+      if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Planning Entitled' || data.row.cells.address.raw === 'Proposed' || data.row.cells.address.raw === 'Total') {
         pdf.setFillColor(102, 178, 255);
       }
     },

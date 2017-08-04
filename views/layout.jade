@@ -17,6 +17,12 @@ html
     script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js')
     
     <!-- Google Maps API -->
-    script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAci6QXhBj6L47RIb8SxCgo1hho5jqHXBc")
+    script(id = "myScript")
+    <!-- script for external API key -->
+    script(src='/javascripts/key.js')
+    script.
+        var google_key = "https://maps.googleapis.com/maps/api/js?key=" + key.apikey;
+        //alert(google_key);
+        document.getElementById("myScript").src = google_key;
   body
     block content
