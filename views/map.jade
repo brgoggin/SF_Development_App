@@ -156,7 +156,7 @@ block content
         var layerData2 = !{JSON.stringify(layerData)};
         var lat = '#{lat}';
         var lon = '#{lon}';
-        
+        var distance = '#{distance}';
         
         /*Fix project status after clicking on button*/
         var proj_status = '#{status_select}';
@@ -170,11 +170,9 @@ block content
         }
         status_option.options[opt_select].selected = true;
         
-        
         /*Fix place status after clicking on button*/
         var place_status = "#{place_select}".replace(/&amp;/g, "&"); //decodeURIComponent not working for some reason so I resorted to this
         place_status = place_status.replace("''", "&#39;&#39;"); //include this for Fisherman's warf
-        console.log(place_status);
         var place_option=document.getElementById("placeSelect");
         var optp_select = 0;
         for (i = 0; i < place_option.options.length; i++) {

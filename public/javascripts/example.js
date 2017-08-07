@@ -1,12 +1,22 @@
 
 // Create variable to hold map element, give initial settings to map
 var map = L.map('map', { center: [37.763317, -122.443445], zoom: 12, renderer: L.canvas()});
+
 // Add Tile Layer
+//Used to use stock Carto map with OSM footprints. Now use Mapbox tiles below, which I like because they are more colorful.
+/*
 var basemapUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-var basemapAttribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>';
-var basemapProperties = {minZoom: 2, maxZoom: 16, attribution: basemapAttribution};
+var basemapAttribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">Carto</a>';
+var basemapProperties = {minZoom: 2, maxZoom: 20, attribution: basemapAttribution};
 L.tileLayer(basemapUrl, basemapProperties).addTo(map);
-  
+*/
+
+L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYmdvZ2dpbiIsImEiOiJjajB1anhqbDAwM2tyMnFscnRtbjQyeTZ0In0.ub1etlqSKPNxMYPTaKLy9w', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'your.mapbox.access.token'
+}).addTo(map);
 
 //Add polygon layer to map if user selects a specific neighborhood. If user did not select a place, string 'All' sent to client instead of a GeoJson
 if (layerData2 != 'All') {
@@ -14,7 +24,8 @@ if (layerData2 != 'All') {
 }
 
 // Add projects layer (i.e. dots) to map
-L.geoJson(myData, {pointToLayer: pointToLayer, onEachFeature: onEachFeature}).addTo(map);
+var points = L.geoJson(myData, {pointToLayer: pointToLayer, onEachFeature: onEachFeature}).addTo(map);
+map.fitBounds(points.getBounds());
 
 if (lat != '' && lon != '') {
     var marker = L.marker([lat, lon]).addTo(map);
@@ -42,7 +53,7 @@ function getRadius() {
 };
 
 function pointToLayer(feature, latlng) {
-        var markerStyle = {radius: null, fillOpacity: 0.7, color: '#666666', opacity: 1, weight: 1, fillColor: '#0E6698'};
+        var markerStyle = {radius: null, fillOpacity: 1, color: '#ffffff', opacity: 1, weight: 1.5, fillColor: '#0E6698'};
         markerStyle.radius = getRadius();
         return L.circleMarker(latlng, markerStyle);
 }
@@ -101,11 +112,26 @@ document.getElementById('pdf_download').addEventListener('click', function() {
 function downloadMap(err, canvas) {
 
     var imgData = canvas.toDataURL();
-    var dimensions = map.getSize();
+    var dimensions = {'x': 600, 'y': 600}
     
     var pdf = new jsPDF('p', 'pt', 'letter');
-    //pdf.text(20,10, 'All Proposed Developments:');
-    //pdf.text(20,25, 'in Bayview Hunters Point');
+    //get place
+    if (distance =='') {
+        if (place_status == 'All') {
+            var place_report = ""
+        } else {
+            var place_report = " in " + place_status
+        }
+    } else {
+        var place_report = " Within " + distance + " miles of " + place_status;
+    }
+    //get status
+    if (proj_status == 'All') {
+        var proj_report = "All Projects";
+    } else {
+        var proj_report = proj_status;
+    }
+    pdf.text(20,15, 'Development Pipeline Report: ' + proj_report + place_report);
     var center = ((pdf.internal.pageSize.width) / 2) - (dimensions.x*(0.25)); //center map image on page
     pdf.addImage(imgData, 'PNG', center, 40, dimensions.x * 0.5, dimensions.y * 0.5);
     

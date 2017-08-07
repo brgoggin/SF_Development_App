@@ -38,9 +38,6 @@ router.get('/map', function(req, res) {
 // GET the filtered page—commented out for now because I am using Carto API
 
 router.get('/filter*', function (req, res) {
-    //res.send(circle.area(4));
-    //res.send(dummy.apikey);
-    
     //Grab Net Units input
     var lower_bound = req.query.lower_bound;
     var upper_bound = req.query.upper_bound;
@@ -163,7 +160,7 @@ router.get('/filter*', function (req, res) {
             var lon = JSON.stringify(res_geo[0].longitude);
             var conversion_factor = "*1609.34"; //convert from miles to meters
             var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
-        
+            
             address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
               var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
               var carto_response = JSON.parse(data);
@@ -178,7 +175,7 @@ router.get('/filter*', function (req, res) {
                   sflower_bound: sflower_bound,
                   sfupper_bound: sfupper_bound,
                   status_select: proj_status,
-                  place_select: place,
+                  place_select: address,
                   address: address, 
                   distance: distance,
                   lat: lat,
@@ -224,10 +221,14 @@ router.get('/csv_export', function(req, res, next) {
       var myArray=[];
 
       for (i = 0; i < carto.features.length; i++) {
-          var myObject = {'Address': carto.features[i].properties.address, 'Net Units': carto.features[i].properties.net_units, 'Net Affordable Units': carto.features[i].properties.net_aff_units, 'Status': carto.features[i].properties.proj_status};
+          var myObject = {'Address': carto.features[i].properties.address, 'Status': carto.features[i].properties.proj_status, 
+          'Net Units': carto.features[i].properties.net_units, 'Net Affordable Units': carto.features[i].properties.net_aff_units,
+          'Net Retail': carto.features[i].properties.net_ret, 'Net MIPS': carto.features[i].properties.net_mips, 
+          'Net CIE': carto.features[i].properties.net_cie, 'Net PDR': carto.features[i].properties.net_pdr,
+          'Net MED': carto.features[i].properties.net_med, 'Net Visit': carto.features[i].properties.net_visit};
           myArray.push(myObject);
       }
-      var fields = ['Address', 'Net Units', 'Net Affordable Units', 'Status'];
+      var fields = ['Address', 'Status','Net Units', 'Net Affordable Units', 'Net Retail', 'Net MIPS', 'Net CIE', 'Net PDR', 'Net MED', 'Net Visit'];
       var csv = json2csv({data: myArray, fields: fields});
       res.setHeader('Content-disposition', 'attachment; filename=data.csv');
       res.set('Content-Type', 'text/csv');
