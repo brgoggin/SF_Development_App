@@ -27,6 +27,129 @@ if (layerData2 != 'All') {
 var points = L.geoJson(myData, {pointToLayer: pointToLayer, onEachFeature: onEachFeature}).addTo(map);
 map.fitBounds(points.getBounds());
 
+/**********************************************
+**Get Summary Statistics of Selection
+**********************************************/
+//Define sum functions for sum rows in table
+function getUnitSum(total, num) {
+    var number = parseInt(num.net_units.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getUnitAffSum(total, num) {
+    var number = parseInt(num.net_aff_units.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getRetSum(total, num) {
+    var number = parseInt(num.net_ret.replace(',', ''));
+    var result = parseInt(total) + number
+    return result;
+}
+function getMipsSum(total, num) {
+    var number = parseInt(num.net_mips.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getCieSum(total, num) {
+    var number = parseInt(num.net_cie.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getPDRSum(total, num) {
+    var number = parseInt(num.net_pdr.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getMedSum(total, num) {
+    var number = parseInt(num.net_med.replace(',', ''));
+    return parseInt(total) + number;
+}
+function getVisitSum(total, num) {
+    var number = parseInt(num.net_visit.replace(',', ''));
+    return parseInt(total) + number;
+}
+
+//Add construction projects to the list
+var cons_rows = [];
+
+for (i = 0; i < myData.features.length; i++) {
+    var props = myData.features[i].properties;
+    if (props.proj_status == 'Under Construction') {
+        var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),"net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+        cons_rows.push(obj);
+    }
+}
+
+var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
+"net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), 
+"net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
+
+//Add BP Approved projects to the list
+var BP_rows = [];
+
+for (i = 0; i < myData.features.length; i++) {
+    var props = myData.features[i].properties;
+    if (props.proj_status == 'Building Permit Approved') {
+        var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
+        "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+        BP_rows.push(obj);
+    }
+}
+
+var BP_sum = {"address": "Building Approved", "net_units": BP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BP_rows.reduce(getRetSum, 0).toLocaleString(),
+"net_mips": BP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BP_rows.reduce(getMedSum, 0).toLocaleString(), 
+"net_visit": BP_rows.reduce(getVisitSum, 0).toLocaleString()};
+
+//Add Planning Entitled Projects to the list
+var PL_rows = [];
+
+for (i = 0; i < myData.features.length; i++) {
+    var props = myData.features[i].properties;
+    if (props.proj_status == 'Planning Entitled') {
+        var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
+        "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+        PL_rows.push(obj);
+    }
+}
+
+var PL_sum = {"address": "Planning Entitled", "net_units": PL_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PL_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PL_rows.reduce(getRetSum, 0).toLocaleString(),
+"net_mips": PL_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PL_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PL_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PL_rows.reduce(getMedSum, 0).toLocaleString(), 
+"net_visit": PL_rows.reduce(getVisitSum, 0).toLocaleString()};
+
+//Add Planning Entitled Projects to the list
+var PP_rows = [];
+
+for (i = 0; i < myData.features.length; i++) {
+    var props = myData.features[i].properties;
+    if (props.proj_status == 'Proposed') {
+        var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
+        "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
+        PP_rows.push(obj);
+    }
+}
+
+var PP_sum = {"address": "Proposed", "net_units": PP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PP_rows.reduce(getRetSum, 0).toLocaleString(),
+"net_mips": PP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PP_rows.reduce(getMedSum, 0).toLocaleString(), 
+"net_visit": PP_rows.reduce(getVisitSum, 0).toLocaleString()};
+
+//Create total sum row
+var total_rows = [];
+total_rows.push(cons_sum, BP_sum, PL_sum, PP_sum);
+
+var total = {"address": "Total", "net_units": total_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": total_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": total_rows.reduce(getRetSum, 0).toLocaleString(),
+"net_mips": total_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": total_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": total_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": total_rows.reduce(getMedSum, 0).toLocaleString(), 
+"net_visit": total_rows.reduce(getVisitSum, 0).toLocaleString()};
+
+document.getElementById("Total").innerHTML = "Total Units: " + total.net_units;
+document.getElementById("Affordable").innerHTML = "Affordable Units: " + total.net_aff_units;
+document.getElementById("Retail").innerHTML = "Retail Sq Ft: " + total.net_ret;
+document.getElementById("MIPS").innerHTML = "Office Sq Ft: " + total.net_mips;
+document.getElementById("CIE").innerHTML = "Institutional Sq Ft: " + total.net_cie;
+document.getElementById("PDR").innerHTML = "Industrial Sq Ft: " + total.net_pdr;
+document.getElementById("MED").innerHTML = "Medical Sq Ft: " + total.net_med;
+document.getElementById("VISIT").innerHTML = "Hotel Sq Ft: " + total.net_visit;
+
+
+/**********************************************
+**End Summary Statistics
+**********************************************/
+
 if (lat != '' && lon != '') {
     var marker = L.marker([lat, lon]).addTo(map);
     map.setView([lat, lon], 15);
@@ -137,8 +260,8 @@ function downloadMap(err, canvas) {
     
 	var columns = [
 	{title: "Address", dataKey: "address"},
-	{title: "Market Rate", dataKey: "net_units"}, 
-	{title: "Affordable", dataKey: "net_aff_units"},
+	{title: "Total Units", dataKey: "net_units"}, 
+	{title: "Affordable Units", dataKey: "net_aff_units"},
     {title: "Retail", dataKey: "net_ret"},
     {title: "MIPS", dataKey: "net_mips"},
     {title: "CIE", dataKey: "net_cie"},
@@ -148,112 +271,6 @@ function downloadMap(err, canvas) {
     
     
     var rows = [];
-    
-    //Define sum functions for sum rows in table
-    function getUnitSum(total, num) {
-        var number = parseInt(num.net_units.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getUnitAffSum(total, num) {
-        var number = parseInt(num.net_aff_units.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getRetSum(total, num) {
-        var number = parseInt(num.net_ret.replace(',', ''));
-        var result = parseInt(total) + number
-        return result;
-    }
-    function getMipsSum(total, num) {
-        var number = parseInt(num.net_mips.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getCieSum(total, num) {
-        var number = parseInt(num.net_cie.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getPDRSum(total, num) {
-        var number = parseInt(num.net_pdr.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getMedSum(total, num) {
-        var number = parseInt(num.net_med.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    function getVisitSum(total, num) {
-        var number = parseInt(num.net_visit.replace(',', ''));
-        return parseInt(total) + number;
-    }
-    
-    //Add construction projects to the list
-    var cons_rows = [];
-    
-    for (i = 0; i < myData.features.length; i++) {
-        var props = myData.features[i].properties;
-        if (props.proj_status == 'Under Construction') {
-            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),"net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
-            cons_rows.push(obj);
-        }
-    }
-    
-    var cons_sum = {"address": "Under Construction", "net_units": cons_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": cons_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": cons_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": cons_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": cons_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": cons_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": cons_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": cons_rows.reduce(getVisitSum, 0).toLocaleString()};
-    
-    //Add BP Approved projects to the list
-    var BP_rows = [];
-    
-    for (i = 0; i < myData.features.length; i++) {
-        var props = myData.features[i].properties;
-        if (props.proj_status == 'Building Permit Approved') {
-            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
-            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
-            BP_rows.push(obj);
-        }
-    }
-    
-    var BP_sum = {"address": "Building Approved", "net_units": BP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": BP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": BP_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": BP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": BP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": BP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": BP_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": BP_rows.reduce(getVisitSum, 0).toLocaleString()};
-    
-    //Add Planning Entitled Projects to the list
-    var PL_rows = [];
-    
-    for (i = 0; i < myData.features.length; i++) {
-        var props = myData.features[i].properties;
-        if (props.proj_status == 'Planning Entitled') {
-            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
-            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
-            PL_rows.push(obj);
-        }
-    }
-    
-    var PL_sum = {"address": "Planning Entitled", "net_units": PL_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PL_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PL_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": PL_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PL_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PL_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PL_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": PL_rows.reduce(getVisitSum, 0).toLocaleString()};
-    
-    //Add Planning Entitled Projects to the list
-    var PP_rows = [];
-    
-    for (i = 0; i < myData.features.length; i++) {
-        var props = myData.features[i].properties;
-        if (props.proj_status == 'Proposed') {
-            var obj = {"address": props.address.toLocaleString(), "net_units": props.net_units.toLocaleString(), "net_aff_units": props.net_aff_units.toLocaleString(), "net_ret": props.net_ret.toLocaleString(),
-            "net_mips": props.net_mips.toLocaleString(), "net_cie": props.net_cie.toLocaleString(), "net_pdr": props.net_pdr.toLocaleString(), "net_med": props.net_med.toLocaleString(), "net_visit": props.net_visit.toLocaleString()};
-            PP_rows.push(obj);
-        }
-    }
-    
-    var PP_sum = {"address": "Proposed", "net_units": PP_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": PP_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": PP_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": PP_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": PP_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": PP_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": PP_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": PP_rows.reduce(getVisitSum, 0).toLocaleString()};
-    
-    //Create total sum row
-    var total_rows = [];
-    total_rows.push(cons_sum, BP_sum, PL_sum, PP_sum);
-    
-    var total = {"address": "Total", "net_units": total_rows.reduce(getUnitSum, 0).toLocaleString(), "net_aff_units": total_rows.reduce(getUnitAffSum, 0).toLocaleString(), "net_ret": total_rows.reduce(getRetSum, 0).toLocaleString(),
-    "net_mips": total_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": total_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": total_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": total_rows.reduce(getMedSum, 0).toLocaleString(), 
-    "net_visit": total_rows.reduce(getVisitSum, 0).toLocaleString()};
     
     //concatenate lists together into one master list
     var rows = rows.concat(cons_sum, cons_rows, BP_sum, BP_rows, PL_sum, PL_rows, PP_sum, PP_rows, total);

@@ -18,6 +18,10 @@ a {
     height: 100%;
 }
 
+.element {
+    float: right;
+}
+
 #map {
     position: absolute;
     right: 0;

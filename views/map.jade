@@ -5,7 +5,7 @@ block content
         form(action='/filter', id='user_input')
             label(for ='name', style='font-weight:bold') Search by Project Attributes:
             br
-            label(for ='name') Project Status: 
+            label(for ='name') Project Status: &nbsp;
             select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
                 option(value='All') All
                 option(value='Under Construction') Under Construction
@@ -13,24 +13,26 @@ block content
                 option(value='Planning Entitled') Planning Entitled
                 option(value='Proposed') Proposed
             br
-            label(for ='lower_bound') Net Units: From
+            label(for ='lower_bound') Net Units: &nbsp;
+            label(for ='lower_bound') From &nbsp;
             input(type='text', value = lower_bound, name='lower_bound', id='lower_bound', style='width: 50px;')
-            label(for ='upper_bound') to
+            label(for ='upper_bound') &nbsp; to &nbsp;
             input(type='text', value=upper_bound, name='upper_bound', id='upper_bound', style='width: 50px;')
             br
-            label(for ='afflower_bound') Net Affordable Units: From
+            label(for ='afflower_bound') Net Affordable Units: &nbsp;
+            label(for ='afflower_bound') From &nbsp;
             input(type='text', value = afflower_bound, name='afflower_bound', id='afflower_bound', style='width: 50px;')
-            label(for ='affupper_bound') to
+            label(for ='affupper_bound') &nbsp; to &nbsp;
             input(type='text', value=affupper_bound, name='affupper_bound', id='affupper_bound', style='width: 50px;')
             br
-            label(for ='sflower_bound') Net Non-Residential SqFt: From
+            label(for ='sflower_bound') Net Non-Residential SqFt: From &nbsp;
             input(type='text', value = sflower_bound, name='sflower_bound', id='sflower_bound', style='width: 50px;')
-            label(for ='sfupper_bound') to
+            label(for ='sfupper_bound') &nbsp; to &nbsp;
             input(type='text', value= sfupper_bound, name='sfupper_bound', id='sfupper_bound', style='width: 50px;')
             br
             label(for ='place', style='font-weight:bold') Search by Area or Address:
             br
-            label(for ='place') Area: 
+            label(for ='place') Area: &nbsp;
             select(name='place', select class="selectpicker", data-live-search="true", id = "placeSelect")
                 option(value = '{"placename": "All", "type": "neighborhoods_41"}') All
                 optgroup(label='Neighborhoods', title='neighborhoods_41')
@@ -137,10 +139,10 @@ block content
                     option(value = '{"placename": "SW", "type": "current_planning_quad"}') Southwest
                     
             br
-            label(for ='address') Address:
+            label(for ='address') Address: &nbsp;
             input(type='text', value = address, name='address', id='address', style='width: 200px;')
             br
-            label(for ='distance') Distance Around (In Miles):
+            label(for ='distance') Distance Around (In Miles): &nbsp;
             input(type='text', value= distance, name='distance', id='distance', style='width: 50px;')
             br
             input(type='submit', value='Update Map', name='on_map')
@@ -149,7 +151,18 @@ block content
             input(type='hidden', name='export_query', value=sent_string, id = 'test_input')
             input(type='submit', value='Export Selection to CSV', name='on_map')
         button(id='pdf_download') Download PDF Report
-        
+        br
+        br
+        #summary 
+            span(style='font-weight:bold') Summary
+            #Total
+            #Affordable
+            #Retail
+            #MIPS
+            #CIE
+            #PDR
+            #MED
+            #VISIT
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
