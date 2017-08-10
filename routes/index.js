@@ -128,7 +128,177 @@ router.get('/filter*', function (req, res) {
     var address_layer = new CartoDB.SQL({user:'bgoggin'});
     
     //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
-    if (place !='All') {
+    if (place =='All' && (address !="" && distance =="")) {
+        sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data2);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: combined_query,
+              lower_bound: lower_bound,
+              upper_bound: upper_bound,
+              afflower_bound: afflower_bound,
+              affupper_bound: affupper_bound,
+              sflower_bound: sflower_bound,
+              sfupper_bound: sfupper_bound,
+              status_select: proj_status,
+              place_select: place,
+              address: address, 
+              distance: distance,
+              lat: lat,
+              lon: lon
+          });
+        });
+    } else if (place == 'All' && (address =="" && distance != "")) {
+        sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data2);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: combined_query,
+              lower_bound: lower_bound,
+              upper_bound: upper_bound,
+              afflower_bound: afflower_bound,
+              affupper_bound: affupper_bound,
+              sflower_bound: sflower_bound,
+              sfupper_bound: sfupper_bound,
+              status_select: proj_status,
+              place_select: place,
+              address: address, 
+              distance: distance,
+              lat: lat,
+              lon: lon
+          });
+        });
+    } else if (place == 'All' && address !="" && distance != "")  {
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
+        geocoder.geocode(address+", San Francisco", function(err, res_geo) {
+            var lat = JSON.stringify(res_geo[0].latitude);
+            var lon = JSON.stringify(res_geo[0].longitude);
+            var conversion_factor = "*1609.34"; //convert from miles to meters
+            var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
+            
+            address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
+              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var carto_response = JSON.parse(data);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: address_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
+                  status_select: proj_status,
+                  place_select: place,
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
+              });
+            });
+        });
+    } else if (place == 'All' && address =="" && distance == "") {
+        sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data2);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: combined_query,
+              lower_bound: lower_bound,
+              upper_bound: upper_bound,
+              afflower_bound: afflower_bound,
+              affupper_bound: affupper_bound,
+              sflower_bound: sflower_bound,
+              sfupper_bound: sfupper_bound,
+              status_select: proj_status,
+              place_select: place,
+              address: address, 
+              distance: distance,
+              lat: lat,
+              lon: lon
+          });
+        })
+    } else if (place !='All' && (address !="" && distance == "")) {
+        var query = "SELECT * FROM " + dataset;
+        var status_select = "All"; //start with all to start
+        sql.execute(query, {format: 'geojson'}).done(function(data) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: query,
+              lower_bound: '',
+              upper_bound: '',
+              afflower_bound: '',
+              affupper_bound: '',
+              sflower_bound: '',
+              sfupper_bound: '',
+              status_select: status_select,
+              place_select: place,
+              address: address, 
+              distance: distance,
+          }); 
+        });
+    } else if (place !='All' && (address =="" && distance != "")) {
+        var query = "SELECT * FROM " + dataset;
+        var status_select = "All"; //start with all to start
+        sql.execute(query, {format: 'geojson'}).done(function(data) {
+          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var carto_response = JSON.parse(data);
+          res.render('map', {
+              jsonData: carto_response,
+              layerData: layer_response,
+              sent_string: query,
+              lower_bound: '',
+              upper_bound: '',
+              afflower_bound: '',
+              affupper_bound: '',
+              sflower_bound: '',
+              sfupper_bound: '',
+              status_select: status_select,
+              place_select: place,
+              address: address, 
+              distance: distance,
+          }); 
+        });
+    } else if (place !='All' && (address !="" && distance != "")) {
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
+        geocoder.geocode(address+", San Francisco", function(err, res_geo) {
+            var lat = JSON.stringify(res_geo[0].latitude);
+            var lon = JSON.stringify(res_geo[0].longitude);
+            var conversion_factor = "*1609.34"; //convert from miles to meters
+            var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
+            
+            address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
+              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var carto_response = JSON.parse(data);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: address_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
+                  status_select: proj_status,
+                  place_select: place,
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
+              });
+            });
+        });
+    } else if (place !='All' && (address =="" && distance == "")) {
         var layer_query = "SELECT the_geom FROM " + type + " WHERE " + var_name + " = '" + place + "'";
         sql_layer.execute(layer_query, {format: 'geojson'}).done(function(data) {
             layer_response = JSON.parse(data);
@@ -153,9 +323,66 @@ router.get('/filter*', function (req, res) {
               });
             });
         });
+    }
+    /*
+    else if (place !='All') {
+        var layer_query = "SELECT the_geom FROM " + type + " WHERE " + var_name + " = '" + place + "'";
+        sql_layer.execute(layer_query, {format: 'geojson'}).done(function(data) {
+            layer_response = JSON.parse(data);
+            sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
+              var carto_response = JSON.parse(data2);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: combined_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
+                  status_select: proj_status,
+                  place_select: place, 
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
+              });
+            });
+        });
+    } else if (place != 'All' && address !="" && distance != "")  {
+        var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
+        geocoder.geocode(address+", San Francisco", function(err, res_geo) {
+            var lat = JSON.stringify(res_geo[0].latitude);
+            var lon = JSON.stringify(res_geo[0].longitude);
+            var conversion_factor = "*1609.34"; //convert from miles to meters
+            var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
+            
+            address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
+              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var carto_response = JSON.parse(data);
+              res.render('map', {
+                  jsonData: carto_response,
+                  layerData: layer_response,
+                  sent_string: address_query,
+                  lower_bound: lower_bound,
+                  upper_bound: upper_bound,
+                  afflower_bound: afflower_bound,
+                  affupper_bound: affupper_bound,
+                  sflower_bound: sflower_bound,
+                  sfupper_bound: sfupper_bound,
+                  status_select: proj_status,
+                  place_select: address,
+                  address: address, 
+                  distance: distance,
+                  lat: lat,
+                  lon: lon
+              });
+            });
+        });
     } else if (place == 'All' && address !="" && distance != "")  {
         var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
-        geocoder.geocode(address, function(err, res_geo) {
+        geocoder.geocode(address+", San Francisco", function(err, res_geo) {
             var lat = JSON.stringify(res_geo[0].latitude);
             var lon = JSON.stringify(res_geo[0].longitude);
             var conversion_factor = "*1609.34"; //convert from miles to meters
@@ -205,7 +432,7 @@ router.get('/filter*', function (req, res) {
               lon: lon
           });
         });
-    }
+    }*/
     
     
 });
@@ -228,7 +455,7 @@ router.get('/csv_export', function(req, res, next) {
           'Net MED': carto.features[i].properties.net_med, 'Net Visit': carto.features[i].properties.net_visit};
           myArray.push(myObject);
       }
-      var fields = ['Address', 'Status','Net Units', 'Net Affordable Units', 'Net Retail', 'Net MIPS', 'Net CIE', 'Net PDR', 'Net MED', 'Net Visit'];
+      var fields = ['Address', 'Status','Net Units', 'Net Affordable Units', 'Net Retail', 'Net Office', 'Net Institutional', 'Net Industrial', 'Net Medical', 'Net Hotel'];
       var csv = json2csv({data: myArray, fields: fields});
       res.setHeader('Content-disposition', 'attachment; filename=data.csv');
       res.set('Content-Type', 'text/csv');

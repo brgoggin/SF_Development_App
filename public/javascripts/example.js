@@ -3,13 +3,6 @@
 var map = L.map('map', { center: [37.763317, -122.443445], zoom: 12, renderer: L.canvas()});
 
 // Add Tile Layer
-//Used to use stock Carto map with OSM footprints. Now use Mapbox tiles below, which I like because they are more colorful.
-/*
-var basemapUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-var basemapAttribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">Carto</a>';
-var basemapProperties = {minZoom: 2, maxZoom: 20, attribution: basemapAttribution};
-L.tileLayer(basemapUrl, basemapProperties).addTo(map);
-*/
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYmdvZ2dpbiIsImEiOiJjajB1anhqbDAwM2tyMnFscnRtbjQyeTZ0In0.ub1etlqSKPNxMYPTaKLy9w', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -22,6 +15,19 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 if (layerData2 != 'All') {
     L.geoJson(layerData2).addTo(map);
 }
+
+//Add user alerts
+if (place_status == "All" && address !="" && distance == "") {
+    alert("You have chosen an address but not a distance around the address. Please specify a distance or clear the address field." );
+} else if (place_status == "All" && address =="" && distance != "") {
+    alert("You have chosen a distance but not an address. Please specify an address or clear the distance field.");
+} else if (place_status != "All" && address !="" && distance == "") {
+    alert("You have chosen an address but not a distance around the address. Please specify the distance. If you instead would like to search by an area, clear the address field.");
+} else if (place_status != "All" && address =="" && distance != "") {
+    alert("You have chosen a distance but not an address. Please specify an address. If you instead would like to search by an area, clear the distance field.");
+} else if (place_status != "All" && address !="" && distance != "") { 
+    alert("You have entered both and address search and an area search. We returned the address search here. If you would like to instead search by area, clear the address and distance fields.");
+} 
 
 // Add projects layer (i.e. dots) to map
 var points = L.geoJson(myData, {pointToLayer: pointToLayer, onEachFeature: onEachFeature}).addTo(map);
@@ -263,11 +269,11 @@ function downloadMap(err, canvas) {
 	{title: "Total Units", dataKey: "net_units"}, 
 	{title: "Affordable Units", dataKey: "net_aff_units"},
     {title: "Retail", dataKey: "net_ret"},
-    {title: "MIPS", dataKey: "net_mips"},
-    {title: "CIE", dataKey: "net_cie"},
-    {title: "PDR", dataKey: "net_pdr"},
-    {title: "MED", dataKey: "net_med"},
-    {title: "VISIT", dataKey: "net_visit"}];
+    {title: "Office", dataKey: "net_mips"},
+    {title: "Institutional", dataKey: "net_cie"},
+    {title: "Industrial", dataKey: "net_pdr"},
+    {title: "Medical", dataKey: "net_med"},
+    {title: "Hotel", dataKey: "net_visit"}];
     
     
     var rows = [];

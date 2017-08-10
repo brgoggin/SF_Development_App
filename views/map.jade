@@ -4,7 +4,7 @@ block content
         h1 SF Development Map | &nbsp; 
         a(href='/faq', target = "_blank") Get More Information
         form(action='/filter', id='user_input')
-            label(for ='name', style='font-weight:bold') Search by Project Attributes:
+            label(for ='name', style='font-weight:bold') Step 1. Search by Project Attributes:
             br
             span(class = 'name') Project Status: &nbsp;
             select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
@@ -35,7 +35,7 @@ block content
                 label(for ='sfupper_bound') &nbsp; to &nbsp;
                 input(type='text', value= sfupper_bound, name='sfupper_bound', id='sfupper_bound', style='width: 50px;')
             br
-            label(for ='place', style='font-weight:bold') Search by Area or Address:
+            label(for ='place', style='font-weight:bold') Step 2. Search by Area or Address:
             br
             label(for ='place') Area: &nbsp;
             select(name='place', select class="selectpicker", data-live-search="true", id = "placeSelect")
@@ -175,6 +175,7 @@ block content
         var lat = '#{lat}';
         var lon = '#{lon}';
         var distance = '#{distance}';
+        var address = '#{address}';
         
         /*Fix project status after clicking on button*/
         var proj_status = '#{status_select}';
