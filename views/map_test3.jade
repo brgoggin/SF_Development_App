@@ -1,40 +1,39 @@
 extends layout
 block content
     #menu
-        h1 SF Development Map | &nbsp; 
-        a(href='/faq', target = "_blank") Get More Information
+        h1 SF Development Map
         form(action='/filter', id='user_input')
             label(for ='name', style='font-weight:bold') Search by Project Attributes:
             br
-            span(class = 'name') Project Status: &nbsp;
-            select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
-                option(value='All') All
-                option(value='Under Construction') Under Construction
-                option(value='Building Permit Approved') Building Permit Approved
-                option(value='Planning Entitled') Planning Entitled
-                option(value='Proposed') Proposed
-            br
-            span(class = 'name') Net Units: &nbsp;
-            span(class='fromto')
+            p
+                label(for ='name') Project Status: &nbsp;
+                label(for ='name')
+                label(for ='name')
+                label(for ='name')
+                select(name='name', select class="selectpicker", data-live-search="true", id = "statusSelect")
+                    option(value='All') All
+                    option(value='Under Construction') Under Construction
+                    option(value='Building Permit Approved') Building Permit Approved
+                    option(value='Planning Entitled') Planning Entitled
+                    option(value='Proposed') Proposed
+            p
+                label(for ='lower_bound') Net Units: &nbsp;
                 label(for ='lower_bound') From &nbsp;
                 input(type='text', value = lower_bound, name='lower_bound', id='lower_bound', style='width: 50px;')
                 label(for ='upper_bound') &nbsp; to &nbsp;
                 input(type='text', value=upper_bound, name='upper_bound', id='upper_bound', style='width: 50px;')
-            br
-            label(for ='afflower_bound') Net Affordable Units: &nbsp;  
-            span(class = 'fromto')
+            p
+                label(for ='afflower_bound') Net Affordable Units: &nbsp;
                 label(for ='afflower_bound') From &nbsp;
                 input(type='text', value = afflower_bound, name='afflower_bound', id='afflower_bound', style='width: 50px;')
                 label(for ='affupper_bound') &nbsp; to &nbsp;
                 input(type='text', value=affupper_bound, name='affupper_bound', id='affupper_bound', style='width: 50px;')
-            br
-            label(for ='sflower_bound') Net Non-Residential SqFt: &nbsp;
-            span(class = 'fromto')
+            p
+                label(for ='sflower_bound') Net Non-Residential SqFt: &nbsp;
                 label(for ='sflower_bound') From &nbsp;
                 input(type='text', value = sflower_bound, name='sflower_bound', id='sflower_bound', style='width: 50px;')
                 label(for ='sfupper_bound') &nbsp; to &nbsp;
                 input(type='text', value= sfupper_bound, name='sfupper_bound', id='sfupper_bound', style='width: 50px;')
-            br
             label(for ='place', style='font-weight:bold') Search by Area or Address:
             br
             label(for ='place') Area: &nbsp;

@@ -8,6 +8,7 @@ a {
 
 #menu h1 {
     font-size: 120%;
+    display: inline;
 }
 
 #menu {
@@ -18,9 +19,33 @@ a {
     height: 100%;
 }
 
-.element {
-    float: right;
+/*
+#menu #user_input .fromto {
+    margin-left: 100px; 
+    padding-right: 50px;
 }
+*/
+
+/*
+#menu form {
+    display: table;
+}
+
+#menu form p {
+    display: table-row;
+}
+
+#menu form p label {
+    display: table-cell;
+}
+
+#menu form p input {
+    display: table-cell;
+}
+
+#menu form p select {
+    display: table-cell;
+}*/
 
 #map {
     position: absolute;
@@ -45,25 +70,5 @@ form label {
 	height: 200px;
   }
   
-div.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
 
-/* Style the buttons inside the tab */
-div.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-}
-
-/* Change background color of buttons on hover */
-div.tab button:hover {
-    background-color: #ddd;
-}
 
