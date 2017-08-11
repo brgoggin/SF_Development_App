@@ -335,13 +335,13 @@ router.get('/csv_export', function(req, res, next) {
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var carto = JSON.parse(data);
       var myArray=[];
-
+      //console.log("Office space:" + carto.features[16].properties.net_cie);
       for (i = 0; i < carto.features.length; i++) {
           var myObject = {'Address': carto.features[i].properties.address, 'Status': carto.features[i].properties.proj_status, 
           'Net Units': carto.features[i].properties.net_units, 'Net Affordable Units': carto.features[i].properties.net_aff_units,
-          'Net Retail': carto.features[i].properties.net_ret, 'Net MIPS': carto.features[i].properties.net_mips, 
-          'Net CIE': carto.features[i].properties.net_cie, 'Net PDR': carto.features[i].properties.net_pdr,
-          'Net MED': carto.features[i].properties.net_med, 'Net Visit': carto.features[i].properties.net_visit};
+          'Net Retail': carto.features[i].properties.net_ret, 'Net Office': carto.features[i].properties.net_mips, 
+          'Net Institutional': carto.features[i].properties.net_cie, 'Net Industrial': carto.features[i].properties.net_pdr,
+          'Net Medical': carto.features[i].properties.net_med, 'Net Hotel': carto.features[i].properties.net_visit};
           myArray.push(myObject);
       }
       var fields = ['Address', 'Status','Net Units', 'Net Affordable Units', 'Net Retail', 'Net Office', 'Net Institutional', 'Net Industrial', 'Net Medical', 'Net Hotel'];
