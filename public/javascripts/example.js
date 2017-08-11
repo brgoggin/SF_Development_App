@@ -244,25 +244,79 @@ function downloadMap(err, canvas) {
     var dimensions = {'x': 600, 'y': 600}
     
     var pdf = new jsPDF('p', 'pt', 'letter');
+    
     //get place
     if (distance =='') {
         if (place_status == 'All') {
-            var place_report = ""
+            var place_report = "Citywide"
         } else {
-            var place_report = " in " + place_status
+            var place_report = place_status
         }
     } else {
         var place_report = " Within " + distance + " miles of " + place_status;
     }
     //get status
     if (proj_status == 'All') {
-        var proj_report = "All Projects";
+        var proj_report = "All projects";
     } else {
         var proj_report = proj_status;
     }
-    pdf.text(20,15, 'Development Pipeline Report: ' + proj_report + place_report);
-    var center = ((pdf.internal.pageSize.width) / 2) - (dimensions.x*(0.25)); //center map image on page
-    pdf.addImage(imgData, 'PNG', center, 40, dimensions.x * 0.5, dimensions.y * 0.5);
+    
+    //get unit bounds
+    if (lower_bound != '' && upper_bound != '') {
+        var unit_query = " Between " + lower_bound + " and " + upper_bound;
+    } else if (lower_bound == '' && upper_bound !='') {
+        var unit_query = " Less than " + upper_bound;
+    } else if (lower_bound != '' && upper_bound =='') {
+        var unit_query = " At least " + lower_bound;
+    } else {
+        var unit_query = "No restrictions";
+    }
+
+    //get affordable unit bounds
+    if (afflower_bound != '' && affupper_bound != '') {
+        var affunit_query = "Between " + afflower_bound + " and " + affupper_bound;
+    } else if (afflower_bound == '' && affupper_bound !='') {
+        var affunit_query = "Less than " + affupper_bound;
+    } else if (afflower_bound != '' && affupper_bound =='') {
+        var affunit_query = "At least " + afflower_bound;
+    } else {
+        var affunit_query = "No restrictions";
+    }
+    
+    //get sq ft bounds
+    if (sflower_bound != '' && sfupper_bound != '') {
+        var sfquery = "Between " + sflower_bound + " and " + sfupper_bound;
+    } else if (sflower_bound == '' && sfupper_bound !='') {
+        var sfquery = "Less than " + sfupper_bound;
+    } else if (sflower_bound != '' && sfupper_bound =='') {
+        var sfquery = "At least " + sflower_bound;
+    } else {
+        var sfquery = "No restrictions";
+    }
+    
+    pdf.setFontSize(16);
+    var center = (pdf.internal.pageSize.width/2);
+    var width = pdf.getStringUnitWidth('Development Pipeline Report') * pdf.internal.getFontSize() / pdf.internal.scaleFactor; //get text width
+    var starting = center - (width/2);
+    pdf.text(starting, 15, 'Development Pipeline Report');
+    var height = pdf.getTextDimensions('Selection Characteristics').h;
+    pdf.text(20, 40+height, 'Selection Characteristics');
+    pdf.setFontSize(11);
+    var split_place = pdf.splitTextToSize('Location: ' + place_report, 260); //260 seems like a good margin to use the text wrap functinality. It tested well.
+    pdf.text(20, 40+height+20, split_place);
+    var split_status = pdf.splitTextToSize('Project Status: ' + proj_report, 260);
+    pdf.text(20, 40+height+50, split_status);
+    var split_total = pdf.splitTextToSize('Total Units Added: ' + unit_query, 260);
+    pdf.text(20, 40+height+80, split_total);
+    var split_aff = pdf.splitTextToSize('Affordable Units Added: ' + affunit_query, 260);
+    pdf.text(20, 40+height+110, split_aff);
+    var split_sf = pdf.splitTextToSize('Non-residential Sq Ft Added: ' + sfquery, 260);
+    pdf.text(20, 40+height+140, split_sf);
+    
+    
+    var right = 292; //this seems aligned with the right edge of the table
+    pdf.addImage(imgData, 'PNG', right, 40, dimensions.x * 0.5, dimensions.y * 0.5);
     
 	var columns = [
 	{title: "Address", dataKey: "address"},
@@ -288,7 +342,7 @@ function downloadMap(err, canvas) {
         pdf.setFillColor(102, 178, 255);
       }
     },
-    startY: 380,
+    startY: 350,
     showHeader: 'firstPage',
     styles: {overflow: 'linebreak', tableWidth: 'auto', },
     margin: 20,
