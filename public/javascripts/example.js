@@ -24,20 +24,20 @@ if (myData.features.length == 0) {
     alert('There are no developments with the entered criteria.');
 } else{
     //Add polygon layer to map if user selects a specific neighborhood. If user did not select a place, string 'All' sent to client instead of a GeoJson
-    if (layerData2 != 'All') {
+    if (layerData2 != 'None') {
         L.geoJson(layerData2).addTo(map);
     }
 
     //Add user alerts
-    if (place_status == "All" && address !="" && distance == "") {
+    if (place_status == "None" && address !="" && distance == "") {
         alert("You have chosen an address but not a distance around the address. Please specify a distance or clear the address field." );
-    } else if (place_status == "All" && address =="" && distance != "") {
+    } else if (place_status == "None" && address =="" && distance != "") {
         alert("You have chosen a distance but not an address. Please specify an address or clear the distance field.");
-    } else if (place_status != "All" && address !="" && distance == "") {
+    } else if (place_status != "None" && address !="" && distance == "") {
         alert("You have chosen an address but not a distance around the address. Please specify the distance. If you instead would like to search by an area, clear the address field.");
-    } else if (place_status != "All" && address =="" && distance != "") {
+    } else if (place_status != "None" && address =="" && distance != "") {
         alert("You have chosen a distance but not an address. Please specify an address. If you instead would like to search by an area, clear the distance field.");
-    } else if (place_status != "All" && address !="" && distance != "") { 
+    } else if (place_status != "None" && address !="" && distance != "") { 
         alert("You have entered both and address search and an area search. We returned the address search here. If you would like to instead search by area, clear the address and distance fields.");
     } 
 
@@ -167,8 +167,9 @@ if (myData.features.length == 0) {
     /**********************************************
     **End Summary Statistics
     **********************************************/
-
+    
     if (lat != '' && lon != '') {
+        // decided to try this later: var markericon = L.icon({iconU'marker-icon-2x.png', iconSize: [38, 95], iconAnchor: [22, 94], popupAnchor:  [-3, -76]});
         var marker = L.marker([lat, lon]).addTo(map);
         map.setView([lat, lon], 15);
     }
@@ -245,13 +246,15 @@ if (myData.features.length == 0) {
 
 
     //Add code to download PDF Report
+    
     document.getElementById('pdf_download').addEventListener('click', function() {
         leafletImage(map, downloadMap);
+        //downloadMap();
     });
 
 
     function downloadMap(err, canvas) {
-
+        
         var imgData = canvas.toDataURL();
         var dimensions = {'x': 600, 'y': 600}
 
@@ -259,7 +262,7 @@ if (myData.features.length == 0) {
 
         //get place
         if (distance =='') {
-            if (place_status == 'All') {
+            if (place_status == 'None') {
                 var place_report = "Citywide"
             } else {
                 var place_report = place_status

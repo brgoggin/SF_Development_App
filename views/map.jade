@@ -37,9 +37,9 @@ block content
             br
             label(for ='place', style='font-weight:bold') Step 2. Search by Area or Address:
             br
-            label(for ='place') Area: &nbsp;
+            label(for ='place', style='font-weight: bold') Choose an area: &nbsp;
             select(name='place', select class="selectpicker", data-live-search="true", id = "placeSelect")
-                option(value = '{"placename": "All", "type": "neighborhoods_41"}') All
+                option(value = '{"placename": "None", "type": "neighborhoods_41"}') None
                 optgroup(label='Neighborhoods', title='neighborhoods_41')
                     option(value = '{"placename": "Bayview Hunters Point", "type": "neighborhoods_41"}') Bayview Hunters Point
                     option(value = '{"placename": "Bernal Heights", "type": "neighborhoods_41"}') Bernal Heights
@@ -142,7 +142,10 @@ block content
                     option(value = '{"placename": "NE", "type": "current_planning_quad"}') Northeast
                     option(value = '{"placename": "NW", "type": "current_planning_quad"}') Northwest
                     option(value = '{"placename": "SW", "type": "current_planning_quad"}') Southwest
-                    
+            br
+            label(style='font-weight: bold') or
+            br
+            label(style='font-weight: bold') Choose an Address and Distance:
             br
             label(for ='address') Address: &nbsp;
             input(type='text', value = address, name='address', id='address', style='width: 200px;')

@@ -15,9 +15,9 @@ router.get('/map', function(req, res) {
     var sql = new CartoDB.SQL({user:'bgoggin'})
     var query = "SELECT * FROM " + dataset;
     var status_select = "All"; //start with all to start
-    var place = "All"; //start with all to start
+    var place = "None"; //start with none to start
     sql.execute(query, {format: 'geojson'}).done(function(data) {
-      var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+      var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
       var carto_response = JSON.parse(data);
       res.render('map', {
           jsonData: carto_response,
@@ -108,7 +108,7 @@ router.get('/filter*', function (req, res) {
         var var_name = 'quad';
     }
 
-    if (place == 'All') {
+    if (place == 'None') {
         var placevar = "(SELECT * FROM table_41_neighborhoods)";
     } else {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
@@ -128,9 +128,9 @@ router.get('/filter*', function (req, res) {
     var address_layer = new CartoDB.SQL({user:'bgoggin'});
     
     //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
-    if (place =='All' && (address !="" && distance =="")) {
+    if (place =='None' && (address !="" && distance =="")) {
         sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
-          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
           var carto_response = JSON.parse(data2);
           res.render('map', {
               jsonData: carto_response,
@@ -150,9 +150,9 @@ router.get('/filter*', function (req, res) {
               lon: lon
           });
         });
-    } else if (place == 'All' && (address =="" && distance != "")) {
+    } else if (place == 'None' && (address =="" && distance != "")) {
         sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
-          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
           var carto_response = JSON.parse(data2);
           res.render('map', {
               jsonData: carto_response,
@@ -172,7 +172,7 @@ router.get('/filter*', function (req, res) {
               lon: lon
           });
         });
-    } else if (place == 'All' && address !="" && distance != "")  {
+    } else if (place == 'None' && address !="" && distance != "")  {
         var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
         geocoder.geocode(address+", San Francisco", function(err, res_geo) {
             var lat = JSON.stringify(res_geo[0].latitude);
@@ -181,7 +181,7 @@ router.get('/filter*', function (req, res) {
             var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
             
             address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
-              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
               var carto_response = JSON.parse(data);
               res.render('map', {
                   jsonData: carto_response,
@@ -202,9 +202,9 @@ router.get('/filter*', function (req, res) {
               });
             });
         });
-    } else if (place == 'All' && address =="" && distance == "") {
+    } else if (place == 'None' && address =="" && distance == "") {
         sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
-          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
           var carto_response = JSON.parse(data2);
           res.render('map', {
               jsonData: carto_response,
@@ -224,11 +224,11 @@ router.get('/filter*', function (req, res) {
               lon: lon
           });
         })
-    } else if (place !='All' && (address !="" && distance == "")) {
+    } else if (place !='None' && (address !="" && distance == "")) {
         var query = "SELECT * FROM " + dataset;
         var status_select = "All"; //start with all to start
         sql.execute(query, {format: 'geojson'}).done(function(data) {
-          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
           var carto_response = JSON.parse(data);
           res.render('map', {
               jsonData: carto_response,
@@ -246,11 +246,11 @@ router.get('/filter*', function (req, res) {
               distance: distance,
           }); 
         });
-    } else if (place !='All' && (address =="" && distance != "")) {
+    } else if (place !='None' && (address =="" && distance != "")) {
         var query = "SELECT * FROM " + dataset;
         var status_select = "All"; //start with all to start
         sql.execute(query, {format: 'geojson'}).done(function(data) {
-          var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+          var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
           var carto_response = JSON.parse(data);
           res.render('map', {
               jsonData: carto_response,
@@ -268,7 +268,7 @@ router.get('/filter*', function (req, res) {
               distance: distance,
           }); 
         });
-    } else if (place !='All' && (address !="" && distance != "")) {
+    } else if (place !='None' && (address !="" && distance != "")) {
         var geocoder = NodeGeocoder({provider: 'google', apiKey: dummy.apikey}); //using Google geocoder API for now. 
         geocoder.geocode(address+", San Francisco", function(err, res_geo) {
             var lat = JSON.stringify(res_geo[0].latitude);
@@ -277,7 +277,7 @@ router.get('/filter*', function (req, res) {
             var address_query = "SELECT * FROM " + dataset + " WHERE ST_Distance(ST_SetSRID(the_geom::geography, 4326), ST_SetSRID(ST_MakePoint(" + lon + "," + lat + ")::geography, 4326)) <= " + distance + conversion_factor + unit_query + affunit_query + sfquery + statusvar;
             
             address_layer.execute(address_query, {format: 'geojson'}).done(function(data) {
-              var layer_response = 'All'; //string meant as filler here since no polygon layer sent to client.
+              var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
               var carto_response = JSON.parse(data);
               res.render('map', {
                   jsonData: carto_response,
@@ -298,7 +298,7 @@ router.get('/filter*', function (req, res) {
               });
             });
         });
-    } else if (place !='All' && (address =="" && distance == "")) {
+    } else if (place !='None' && (address =="" && distance == "")) {
         var layer_query = "SELECT the_geom FROM " + type + " WHERE " + var_name + " = '" + place + "'";
         sql_layer.execute(layer_query, {format: 'geojson'}).done(function(data) {
             layer_response = JSON.parse(data);
