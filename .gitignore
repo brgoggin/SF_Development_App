@@ -2,4 +2,3 @@ node_modules
 .DS_Store
 public/javascripts/key.js
 routes/key.json
-public/leaflet
