@@ -107,6 +107,9 @@ router.get('/filter*', function (req, res) {
     else if (type == 'current_planning_quad') {
         var var_name = 'quad';
     }
+    else if (type == 'agg_taz') {
+        var var_name = 'fullname';
+    }
 
     if (place == 'None') {
         var placevar = "(SELECT * FROM table_41_neighborhoods)";
