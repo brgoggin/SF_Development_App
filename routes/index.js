@@ -1,7 +1,6 @@
 var express = require('express'); // require Express
 var router = express.Router(); // setup usage of the Express router engine
 var json2csv = require('json2csv');
-var jquery = require('jQuery');
 var CartoDB = require('cartodb');
 var NodeGeocoder = require('node-geocoder');
 var dummy = require('./key.json');
@@ -16,6 +15,8 @@ router.get('/map', function(req, res) {
     var query = "SELECT * FROM " + dataset;
     var status_select = "All"; //start with all to start
     var place = "None"; //start with none to start
+    var address = '';
+    var distance = '';
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
       var carto_response = JSON.parse(data);
@@ -30,7 +31,9 @@ router.get('/map', function(req, res) {
           sflower_bound: '',
           sfupper_bound: '',
           status_select: status_select,
-          place_select: place
+          place_select: place,
+          address: address,
+          distance: distance
       }); 
     });
 });

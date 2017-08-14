@@ -261,14 +261,14 @@ if (myData.features.length == 0) {
         var pdf = new jsPDF('p', 'pt', 'letter');
 
         //get place
-        if (distance =='') {
+        if (address =='') {
             if (place_status == 'None') {
                 var place_report = "Citywide"
             } else {
                 var place_report = place_status
             }
         } else {
-            var place_report = " Within " + distance + " miles of " + place_status;
+            var place_report = " Within " + distance + " miles of " + address;
         }
         //get status
         if (proj_status == 'All') {
