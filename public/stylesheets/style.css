@@ -9,6 +9,7 @@ a {
 #menu h1 {
     font-size: 120%;
     display: inline;
+    font-weight: bold;
 }
 
 #menu {
