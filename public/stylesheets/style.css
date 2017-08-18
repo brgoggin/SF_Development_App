@@ -1,5 +1,6 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 100%;
 }
 
 a {
@@ -49,8 +50,9 @@ a {
 }*/
 
 #map {
-    position: absolute;
+    position: fixed;
     right: 0;
+    bottom: 0;
 	width: 60%;
 	height: 100%;
 }

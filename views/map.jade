@@ -1,9 +1,11 @@
 extends layout
 block content
     #menu
-        h1 SF Development Map | &nbsp; 
+        h1 SF Development Map &nbsp; | &nbsp; 
         a(href='/faq', target = "_blank") Get More Information
-        form(action='/filter', id='user_input')
+        br
+        br
+        form(action='/filter', id='user_input', style='display: inline')
             label(for ='name', style='font-weight:bold') Step 1. Search by Project Attributes:
             br
             span(class = 'name') Project Status: &nbsp;
@@ -34,6 +36,7 @@ block content
                 input(type='text', value = sflower_bound, name='sflower_bound', id='sflower_bound', style='width: 70px;')
                 label(for ='sfupper_bound') &nbsp; to &nbsp;
                 input(type='text', value= sfupper_bound, name='sfupper_bound', id='sfupper_bound', style='width: 70px;')
+            br
             br
             label(for ='place', style='font-weight:bold') Step 2. Search by Area or Address:
             br
@@ -167,11 +170,18 @@ block content
             input(type='text', value= distance, name='distance', id='distance', style='width: 50px;')
             br
             input(type='submit', value='Update Map', name='on_map')
-    
-        form(action='/csv_export')
+        span() &nbsp;
+        form(action='/map', id='clear', style='display: inline')
+            input(type='submit', value='Clear Selection', name='clear')
+        br
+        br
+        span(style='font-weight:bold') Step 3. Export Selection:
+        br
+        form(action='/csv_export', style='display: inline-block')
             input(type='hidden', name='export_query', value=sent_string, id = 'test_input')
-            input(type='submit', value='Export Selection to CSV', name='on_map')
-        button(id='pdf_download') Download PDF Report
+            input(type='submit', value='CSV', name='on_map')
+        span() &nbsp;
+        button(id='pdf_download', style='display: inline-block') PDF Report
         br
         br
         #summary 
@@ -184,6 +194,9 @@ block content
             #PDR
             #MED
             #VISIT
+        #Disclaimer
+            span(style='font-weight:bold') Disclaimer: &nbsp;
+            span() This map is up to date as of March 31, 2017. See "Get More Information" link above for more info.
     #map
     script.
         var myData = !{JSON.stringify(jsonData)};
@@ -224,6 +237,13 @@ block content
             }
         }
         place_option.options[optp_select].selected = true;
+        
+        //document.getElementById("placeSelect").options[3].selected = true;
+        function clearSelection() {
+            //alert("hello");
+            //document.getElementById("placeSelect").options[5].selected = true;
+            //place_option.options[5].selected = true;
+        }
         
         
     script(src="/javascripts/example.js")

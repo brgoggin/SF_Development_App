@@ -1,3 +1,8 @@
+/*
+function clearSelection() {
+    //alert("hello");
+    document.getElementById("placeSelect").options[1].selected = true;
+}*/
 
 // Create variable to hold map element, give initial settings to map
 var map = L.map('map', { center: [37.763317, -122.443445], zoom: 12, renderer: L.canvas()});
@@ -154,14 +159,14 @@ if (myData.features.length == 0) {
     "net_mips": total_rows.reduce(getMipsSum, 0).toLocaleString(), "net_cie": total_rows.reduce(getCieSum, 0).toLocaleString(), "net_pdr": total_rows.reduce(getPDRSum, 0).toLocaleString(), "net_med": total_rows.reduce(getMedSum, 0).toLocaleString(), 
     "net_visit": total_rows.reduce(getVisitSum, 0).toLocaleString()};
 
-    document.getElementById("Total").innerHTML = "Total Units: " + total.net_units;
-    document.getElementById("Affordable").innerHTML = "Affordable Units: " + total.net_aff_units;
-    document.getElementById("Retail").innerHTML = "Retail Sq Ft: " + total.net_ret;
-    document.getElementById("MIPS").innerHTML = "Office Sq Ft: " + total.net_mips;
-    document.getElementById("CIE").innerHTML = "Institutional Sq Ft: " + total.net_cie;
-    document.getElementById("PDR").innerHTML = "Industrial Sq Ft: " + total.net_pdr;
-    document.getElementById("MED").innerHTML = "Medical Sq Ft: " + total.net_med;
-    document.getElementById("VISIT").innerHTML = "Hotel Sq Ft: " + total.net_visit;
+    document.getElementById("Total").innerHTML = "Net Total Units: " + total.net_units;
+    document.getElementById("Affordable").innerHTML = "Net Affordable Units: " + total.net_aff_units;
+    document.getElementById("Retail").innerHTML = "Net Retail Sq Ft: " + total.net_ret;
+    document.getElementById("MIPS").innerHTML = "Net Office Sq Ft: " + total.net_mips;
+    document.getElementById("CIE").innerHTML = "Net Institutional Sq Ft: " + total.net_cie;
+    document.getElementById("PDR").innerHTML = "Net PDR Sq Ft: " + total.net_pdr;
+    document.getElementById("MED").innerHTML = "Net Medical Sq Ft: " + total.net_med;
+    document.getElementById("VISIT").innerHTML = "Net Hotel Sq Ft: " + total.net_visit;
 
 
     /**********************************************
@@ -205,7 +210,14 @@ if (myData.features.length == 0) {
     		click: clickFeature
         });
     }
-
+    //define function to toggle project descriptions
+    function change( el ) {
+    if ( el.value === "Show Description" )
+        el.value = "Hide Description";
+    else
+        el.value = "Show Description";
+    $(".description").toggle();
+    }
     //on click, pan/zoom to feature and show popup
     function clickFeature(e) {
         var target = e.target;
@@ -219,7 +231,7 @@ if (myData.features.length == 0) {
         '<br /><span class="popup-label">Status: ' + props.proj_status + '</span>' +
         '<br /><span class="popup-label">Zoning: ' + props.zoning_sim + '</span>' +
         '<div id = "pano" class = "pano"></div>' +
-        '<button>Show Description</button>' +
+        '<input type="button" value="Show Description" onclick="return change(this);"/>' +
         '<br /><span class="description">' + props.pln_desc + '</span>';
 
         var popup = L.popup({closeOnClick: false}).setContent(popupContent).setLatLng(latlng);
@@ -238,7 +250,7 @@ if (myData.features.length == 0) {
          	});
 
     		$("button").click(function(){
-    			  $(".description").toggle();
+    			$(".description").toggle();
     		 });
     	 //updates popup content so that toggling works when opening popup a second time in the same session. Don't understand why this fixes it, but it does. 
     	 target.updatePopup();
@@ -249,7 +261,6 @@ if (myData.features.length == 0) {
     
     document.getElementById('pdf_download').addEventListener('click', function() {
         leafletImage(map, downloadMap);
-        //downloadMap();
     });
 
 
@@ -314,7 +325,7 @@ if (myData.features.length == 0) {
         var center = (pdf.internal.pageSize.width/2);
         var width = pdf.getStringUnitWidth('Development Pipeline Report') * pdf.internal.getFontSize() / pdf.internal.scaleFactor; //get text width
         var starting = center - (width/2);
-        pdf.text(starting, 15, 'Development Pipeline Report');
+        pdf.text(starting, 20, 'Development Pipeline Report');
         var height = pdf.getTextDimensions('Selection Characteristics').h;
         pdf.text(20, 40+height, 'Selection Characteristics');
         pdf.setFontSize(11);
@@ -340,7 +351,7 @@ if (myData.features.length == 0) {
         {title: "Retail", dataKey: "net_ret"},
         {title: "Office", dataKey: "net_mips"},
         {title: "Institutional", dataKey: "net_cie"},
-        {title: "Industrial", dataKey: "net_pdr"},
+        {title: "PDR", dataKey: "net_pdr"},
         {title: "Medical", dataKey: "net_med"},
         {title: "Hotel", dataKey: "net_visit"}];
 
