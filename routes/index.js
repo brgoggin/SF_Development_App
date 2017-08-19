@@ -101,7 +101,7 @@ router.get('/filter*', function (req, res) {
     else if (type == 'pdas') {
         var var_name = 'name';
     }
-    else if (type == 'area_plans') {
+    else if (type == 'planning_areas') {
         var var_name = 'planarea';
     }
     else if (type == 'supervisor_districts') {
