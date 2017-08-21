@@ -291,7 +291,7 @@ if (myData.features.length == 0) {
         } else if (lower_bound != '' && upper_bound =='') {
             var unit_query = " At least " + lower_bound;
         } else {
-            var unit_query = "No restrictions";
+            var unit_query = "No filters applied";
         }
 
         //get affordable unit bounds
@@ -302,7 +302,7 @@ if (myData.features.length == 0) {
         } else if (afflower_bound != '' && affupper_bound =='') {
             var affunit_query = "At least " + afflower_bound;
         } else {
-            var affunit_query = "No restrictions";
+            var affunit_query = "No filters applied";
         }
 
         //get sq ft bounds
@@ -313,7 +313,7 @@ if (myData.features.length == 0) {
         } else if (sflower_bound != '' && sfupper_bound =='') {
             var sfquery = "At least " + sflower_bound;
         } else {
-            var sfquery = "No restrictions";
+            var sfquery = "No filters applied";
         }
 
         pdf.setFontSize(16);
@@ -361,6 +361,7 @@ if (myData.features.length == 0) {
         drawCell: function(cell, data) {
           if (data.row.cells.address.raw === 'Under Construction' || data.row.cells.address.raw === 'Building Approved' || data.row.cells.address.raw === 'Planning Entitled' || data.row.cells.address.raw === 'Proposed' || data.row.cells.address.raw === 'Total') {
             pdf.setFillColor(102, 178, 255);
+            pdf.setTextColor(255,255,255);
           }
         },
         startY: 350,
