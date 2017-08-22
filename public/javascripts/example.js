@@ -199,9 +199,24 @@ if (myData.features.length == 0) {
             markerStyle.radius = getRadius();
             return L.circleMarker(latlng, markerStyle);
     }
+    
+	//on mouseover, highlight the feature hovered over
+	function highlightFeature(e) {
+	    var target = e.target;
+	    target.setStyle({radius: getRadius()*1.2, weight: 2,}); //make radius 20% bigger when hovering, plus make outline thicker
+	    target.bringToFront();
+	}
+
+	//on mouseout, reset highlighted feature's style
+	function resetHighlight(e) {
+	    var target = e.target;
+	    target.setStyle({radius: getRadius(), color: '#ffffff'}); //reset to default settings
+	}
 
     function onEachFeature(feature, layer) {
         layer.on({
+	        mouseover: highlightFeature,
+	        mouseout: resetHighlight,
     		click: clickFeature
         });
     }
