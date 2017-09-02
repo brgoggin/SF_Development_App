@@ -9,9 +9,11 @@ var dummy = require('./key.json');
 //initialize data here so that we make it global in scope for this file
 var data = null;
 var dataset = 'q12017';
+var cartouser = 'sfplanning';
+
 // GET the map page 
 router.get('/map', function(req, res) {
-    var sql = new CartoDB.SQL({user:'bgoggin'})
+    var sql = new CartoDB.SQL({user: cartouser})
     var query = "SELECT * FROM " + dataset;
     var status_select = "All"; //start with all to start
     var place = "None"; //start with none to start
@@ -37,6 +39,7 @@ router.get('/map', function(req, res) {
       }); 
     });
 });
+
 
 // GET the filtered page—commented out for now because I am using Carto API
 
@@ -122,16 +125,16 @@ router.get('/filter*', function (req, res) {
     
     var combined_query = "SELECT cd.address, cd.net_units, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
     
-    var sql_layer = new CartoDB.SQL({user:'bgoggin'});
+    var sql_layer = new CartoDB.SQL({user:cartouser});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
-    var sql = new CartoDB.SQL({user:'bgoggin'})
+    var sql = new CartoDB.SQL({user:cartouser})
     //Geocoder variables if User Selects Distance and Address. Address sql search in conditional clause below.
     var address = req.query.address;
     var distance = req.query.distance;
     var lat = ''; //initialize lat and lon
     var lon = '';
     
-    var address_layer = new CartoDB.SQL({user:'bgoggin'});
+    var address_layer = new CartoDB.SQL({user:cartouser});
     
     //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
     if (place =='None' && (address !="" && distance =="")) {
@@ -336,7 +339,7 @@ router.get('/filter*', function (req, res) {
 router.get('/csv_export', function(req, res, next) {
     var query = req.query.export_query;
     
-    var sql = new CartoDB.SQL({user:'bgoggin'})
+    var sql = new CartoDB.SQL({user:cartouser})
     
     sql.execute(query, {format: 'geojson'}).done(function(data) {
       var carto = JSON.parse(data);
@@ -361,6 +364,35 @@ router.get('/csv_export', function(req, res, next) {
 
 router.get('/faq', function(req, res, next) {
     res.render('faq');
+});
+
+//Add extra section to capture any forwarding errors from GoDaddy that add set of random extra characters to end of URL. Send to map homepage
+router.get('/*', function(req, res) {
+    var sql = new CartoDB.SQL({user:cartouser})
+    var query = "SELECT * FROM " + dataset;
+    var status_select = "All"; //start with all to start
+    var place = "None"; //start with none to start
+    var address = '';
+    var distance = '';
+    sql.execute(query, {format: 'geojson'}).done(function(data) {
+      var layer_response = 'None'; //string meant as filler here since no polygon layer sent to client.
+      var carto_response = JSON.parse(data);
+      res.render('map', {
+          jsonData: carto_response,
+          layerData: layer_response,
+          sent_string: query,
+          lower_bound: '',
+          upper_bound: '',
+          afflower_bound: '',
+          affupper_bound: '',
+          sflower_bound: '',
+          sfupper_bound: '',
+          status_select: status_select,
+          place_select: place,
+          address: address,
+          distance: distance
+      }); 
+    });
 });
 
 module.exports = router;
