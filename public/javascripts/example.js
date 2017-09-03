@@ -4,7 +4,7 @@ var map = L.map('map', { center: [37.763317, -122.443445], zoom: 12, renderer: L
 
 // Add Tile Layer
 
-L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYmdvZ2dpbiIsImEiOiJjajB1anhqbDAwM2tyMnFscnRtbjQyeTZ0In0.ub1etlqSKPNxMYPTaKLy9w', {
+L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2ZwbGFubmluZzEiLCJhIjoiY2o3M3VxYWZoMGp0ODJ3bnU2cng2Z21ldiJ9.XuWMZzFbn_fjFWamKYzv0w', {
     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 18,
     id: 'mapbox.streets',

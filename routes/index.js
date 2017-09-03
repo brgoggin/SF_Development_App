@@ -118,7 +118,7 @@ router.get('/filter*', function (req, res) {
     }
 
     if (place == 'None') {
-        var placevar = "(SELECT * FROM table_41_neighborhoods)";
+        var placevar = "(SELECT * FROM neighborhoods_41)";
     } else {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
@@ -135,7 +135,7 @@ router.get('/filter*', function (req, res) {
     var lon = '';
     
     var address_layer = new CartoDB.SQL({user:cartouser});
-    
+    console.log(combined_query);
     //Select layers to send to client. If user selects a specific place, send that polygon and intersecting points layer to client. If not, just send the points layer to the client. 
     if (place =='None' && (address !="" && distance =="")) {
         sql.execute(combined_query, {format: 'geojson'}).done(function(data2) {
