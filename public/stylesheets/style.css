@@ -62,8 +62,14 @@ form label {
 }
 
 .description {
-  display: none;
-  	color: #777;
+    display: none;
+    color: #777;
+}
+
+
+#descbutton {
+    position: fixed;
+    left: 16px;
 }
 
 #pano {
