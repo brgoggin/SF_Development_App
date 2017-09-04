@@ -9,7 +9,7 @@ var dummy = require('./key.json');
 //initialize data here so that we make it global in scope for this file
 var data = null;
 var dataset = 'q12017';
-var cartouser = 'sfplanning';
+var cartouser = 'bgoggin';
 
 // GET the map page 
 router.get('/map', function(req, res) {
