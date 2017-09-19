@@ -116,6 +116,9 @@ router.get('/filter*', function (req, res) {
     else if (type == 'agg_taz') {
         var var_name = 'fullname';
     }
+    else if (type=='better_market_street') {
+        var var_name='objectid'
+    }
 
     if (place == 'None') {
         var placevar = "(SELECT * FROM neighborhoods_41)";
