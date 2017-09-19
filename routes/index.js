@@ -117,7 +117,7 @@ router.get('/filter*', function (req, res) {
         var var_name = 'fullname';
     }
     else if (type=='better_market_street') {
-        var var_name='objectid'
+        var var_name='name'
     }
 
     if (place == 'None') {
