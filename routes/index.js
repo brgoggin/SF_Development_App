@@ -11,6 +11,11 @@ var data = null;
 var dataset = 'q12017';
 var cartouser = 'bgoggin';
 
+//first, specify FAQ page
+router.get('/map/faq', function(req, res, next) {
+    res.render('faq');
+});
+
 // GET the map page 
 router.get('/map', function(req, res) {
     var sql = new CartoDB.SQL({user: cartouser})
@@ -363,10 +368,6 @@ router.get('/csv_export', function(req, res, next) {
       res.status(200).send(csv);
       });
 
-});
-
-router.get('/map/faq', function(req, res, next) {
-    res.render('faq');
 });
 
 //Add extra section to capture any forwarding errors from GoDaddy that add set of random extra characters to end of URL. Send to map homepage
