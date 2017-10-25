@@ -2,7 +2,7 @@ extends layout
 block content
     #menu
         h1 SF Development Pipeline Map &nbsp; | &nbsp; 
-        a(href='/faq', target = "_blank") Get More Information
+        a(href='/map/faq', target = "_blank") Get More Information
         br
         br
         form(action='/filter', id='user_input', style='display: inline')
@@ -199,7 +199,8 @@ block content
                     option(value = '{"placename": "Sunset", "type": "agg_taz"}') Sunset
                     option(value = '{"placename": "Western Market", "type": "agg_taz"}') Western Market
                 optgroup(label='Other', title='better_market_street')
-                    option(value = '{"placename": "Better Market Street", "type": "better_market_street"}') Better Market Street Plan Area
+                    option(value = '{"placename": "Better Market Street", "type": "better_market_street"}') Better Market Street Plan Area Area
+                    
             br
             label(style='font-weight: bold') or
             br
