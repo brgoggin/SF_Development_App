@@ -365,7 +365,7 @@ router.get('/csv_export', function(req, res, next) {
 
 });
 
-router.get('/faq', function(req, res, next) {
+router.get('/map/faq', function(req, res, next) {
     res.render('faq');
 });
 
