@@ -124,6 +124,12 @@ router.get('/filter*', function (req, res) {
     else if (type=='better_market_street') {
         var var_name='name'
     }
+    else if (type=='bart_buffer') {
+        var var_name='name'
+    }
+    else if (type=='muni_buffer') {
+        var var_name='name'
+    }
 
     if (place == 'None') {
         var placevar = "(SELECT * FROM neighborhoods_41)";
