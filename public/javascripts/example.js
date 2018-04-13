@@ -239,10 +239,10 @@ if (myData.features.length == 0) {
         '<br /><span class="popup-label">Net Affordable Units: ' + props.net_aff_units + '</span>' +
         '<br /><span class="popup-label">Net Non-Res SqFt: ' + props.net_gsf.toLocaleString() + '</span>' +
         '<br /><span class="popup-label">Status: ' + props.proj_status + '</span>' +
-        '<br /><span class="popup-label">Zoning: ' + props.zoning_sim + '</span>' +
+        //'<br /><span class="popup-label">Zoning: ' + props.zoning_sim + '</span>' + Commenting out zoning information after latest pipeline data did not include it
         //'<div id = "pano" class = "pano"></div>' + Commenting out panorama after Google told us to get rid of it (violated terms of use)
         '<br/><input type="button" value="Show Description" onclick="return change(this);" id = "descbutton"/>' +
-        '<br style="line-height:3.5vh"/><span class="description">' + props.pln_desc + '</span>';
+        '<br style="line-height:3.5vh"/><span class="description">' + props.bp_desc + '</span>';
 
         var popup = L.popup({closeOnClick: false}).setContent(popupContent).setLatLng(latlng);
         target.bindPopup(popup).openPopup(); 

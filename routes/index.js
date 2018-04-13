@@ -8,7 +8,7 @@ var dummy = require('./key.json');
 
 //initialize data here so that we make it global in scope for this file
 var data = null;
-var dataset = 'q32017';
+var dataset = 'q42017';
 var cartouser = 'bgoggin';
 
 //first, specify FAQ page
@@ -137,7 +137,8 @@ router.get('/filter*', function (req, res) {
         var placevar = "(SELECT * FROM " + type + " WHERE " + var_name + " = '" + place + "')";
     }
     
-    var combined_query = "SELECT cd.address, cd.net_units, cd.proj_status, cd.zoning_sim, cd.pln_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
+    //for Q4 2017, got rid of zoning information from the below query because no zoning information in that quarter
+    var combined_query = "SELECT cd.address, cd.net_units, cd.proj_status, cd.bp_desc, cd.net_aff_units, cd.net_gsf, cd.net_ret, cd.net_mips, cd.net_cie, cd.net_pdr, cd.net_med, cd.net_visit, cd.the_geom FROM " + dataset + " AS cd, " + placevar + " AS dd_nc WHERE ST_Intersects(cd.the_geom, dd_nc.the_geom) " + unit_query + affunit_query + sfquery + statusvar;
     
     var sql_layer = new CartoDB.SQL({user:cartouser});
     var layer_response = 'hello2'; //initialize layer_response outside of the function below
