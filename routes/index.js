@@ -8,7 +8,7 @@ var dummy = require('./key.json');
 
 //initialize data here so that we make it global in scope for this file
 var data = null;
-var dataset = 'q42017';
+var dataset = 'q12018';
 var cartouser = 'bgoggin';
 
 //first, specify FAQ page
